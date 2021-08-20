@@ -1,2 +1,2 @@
 # feather
-FEATure HasHER 
+FEATure HashER 
