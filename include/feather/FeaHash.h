@@ -24,16 +24,26 @@ class FeaHash {
   FeaHash();
   FeaHash(const std::string& conf_path);
  
-  int32_t SlotRegister(const std::string& fea_name, 
-      const int32_t slot_id, const int32_t bucket_size);
+  int32_t SlotRegister(const std::string& fea_name, const int32_t slot_id, 
+      const int32_t bucket_size, const int16_t slot_type);
 
-  int64_t FeaRegister(
+  std::vector<int64_t> FeaRegister(
       const std::string& fea_name, const std::string& fea_value);
+  std::vector<int64_t> FeaRegister(
+      const std::string& fea_name, const std::vector<float>& fea_value);
+  std::vector<int64_t> FeaRegister(
+      const std::string& fea_name, const float fea_value);
+
+  const nlohmann::json& GetMeta();
 
   void Merge(FeaHash fea_hash);
 
  protected:
-  int64_t Fea2FeaID(const std::string& name, const std::string& val);
+  /**
+   * @brief Only works for discrete feature.
+   */
+  std::vector<int64_t> Fea2FeaID(const std::string& name, const std::string& val);
+  std::string BucketID2BucketCode(const int32_t bucket_id);
  
  private:
   std::string conf_path;
@@ -42,6 +52,7 @@ class FeaHash {
       { "slots", {} }
   };
   int32_t slot_num = 0;
+  int32_t val_hash_digits = 0;
 
   std::unordered_map<std::string, FeaSlot> name2slot;
   std::unordered_map<int32_t, std::string> slot2name;

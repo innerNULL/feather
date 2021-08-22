@@ -24,16 +24,41 @@ LibsvmExtractor::LibsvmExtractor(
 std::string LibsvmExtractor::Extract(const nlohmann::json& flat_json) {
   std::string output;
   for (auto it = flat_json.begin(); it != flat_json.end(); ++it) {
-    //std::cout << it.key() << " : " << it.value() << std::endl;
+    std::vector<int64_t> hash_id;
     std::string fea_val;
+    int16_t fea_type = this->fea_hash.GetMeta()["slots"][it.key()]["type"];
+    std::string libsvm_val;
     auto val = it.value();
+
     if (it.value().is_number()) {
-      fea_val = std::to_string((float)val);
+      if (fea_type == 1) {
+        fea_val = std::to_string((float)val);
+        libsvm_val = fea_val;
+        hash_id = this->fea_hash.FeaRegister(it.key(), (float)val);
+      } else if (fea_type == 0) {
+        /// TODO@202108221439: In case `val` is a float but discrete feature.
+        fea_val = std::to_string((int32_t)val);
+        libsvm_val = "1";
+        hash_id = this->fea_hash.FeaRegister(it.key(), fea_val);
+      }
     } else if (it.value().is_string()) {
-      fea_val = it.value();
+      if (fea_type == 0) {
+        fea_val = it.value();
+        libsvm_val = "1"; 
+        hash_id = this->fea_hash.FeaRegister(it.key(), fea_val);
+      } else if (fea_type == 1) {
+        fea_val = std::to_string(std::stof((std::string)it.value()));
+        libsvm_val = fea_val;
+        hash_id = this->fea_hash.FeaRegister(it.key(), (float)it.value());
+      }
+    } else if (val.is_array()) {
+      if (val.size() > 0) {
+
+      }
     }
-    int64_t hash_id = this->fea_hash.FeaRegister(it.key(), fea_val);
-    output += (std::to_string(hash_id) + ":1 ");
+    for (int64_t id : hash_id) {
+      output += (std::to_string(id) + ":" + libsvm_val + " ");
+    }
   }
   return output;
 }

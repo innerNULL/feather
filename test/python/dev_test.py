@@ -25,10 +25,21 @@ def main():
     fea8val2_id = fea_hash.FeaRegister("fea8", "val2")
     print("fea8#val2", fea8val2_id)
 
+    fea10val1_id = fea_hash.FeaRegister("fea10", 3.14)
+    print("fea10#val1", fea10val1_id)
+    fea10val2_id = fea_hash.FeaRegister("fea10", 128)
+    print("fea10#val2", fea10val2_id)
+
+    fea11val1_id = fea_hash.FeaRegister("fea11", [1,2,3,4])
+    print("fea11#val1", fea11val1_id)
+    fea11val2_id = fea_hash.FeaRegister("fea11", [4.0, 3.0, 2.0, 1.0])
+    print("fea11#val2", fea11val2_id)
+
+
     libsvm_extractor = pyfeather.LibsvmExtractor("../conf/feather.conf", False)
-    record1 = "{\"fea1\":2}"
+    record1 = "{\"fea1\":2, \"fea2\": \"a\", \"fea8\": \"123\", \"fea10\": 3.14}"
     #print(record1)
-    print(libsvm_extractor.Extract("{\"fea1\":2, \"fea2\": \"a\", \"fea8\": \"123\"}"))
+    print(libsvm_extractor.Extract(record1))
 
 
 if __name__ == "__main__":

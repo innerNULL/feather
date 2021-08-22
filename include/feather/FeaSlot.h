@@ -21,16 +21,24 @@ namespace feather {
 class FeaSlot {
  public:
   FeaSlot() = default;
-  FeaSlot(const std::string& name, 
-      const int32_t slot_id, const int32_t bucket_size);
+  /**
+   * @brief
+   * For float array, bucket_size MUST equals to array size.
+   * For discrete feature such as tags, bucket_size is hash-bucket number.
+   * For continuous feature, bucket_size MUST equalt to 1.
+   */
+  FeaSlot(const std::string& name, const int32_t slot_id, 
+      const int32_t bucket_size, const int8_t slot_type=0);
 
   void Info();
   int32_t ValRegister(const std::string val, const int64_t val_hash);
   int32_t GetBucketID(const std::string& val);
   int32_t GetSlotID();
+  int32_t GetBucketSize();
   void Merge(FeaSlot fea_slot);
 
  private:
+  int8_t slot_type; /// 0 for discrete, 1 for continuous, 2 for array.
   std::string kv_delimiter = "#";
   std::string name;
   int32_t slot_id = -1;
