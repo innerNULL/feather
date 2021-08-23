@@ -78,7 +78,7 @@ std::vector<int64_t> FeaHash::Fea2FeaID(
     fea_id_str = std::to_string(slot_id) + this->BucketID2BucketCode(bucket_id);
   } else if (fea_type == 1) {
     //fea_id_str = std::to_string(slot_id) + std::string(this->val_hash_digits, '0');
-    fea_id_str = std::to_string(slot_id) + this->BucketID2BucketCode(bucket_id);
+    fea_id_str = std::to_string(slot_id) + this->BucketID2BucketCode(0);
   } else if (fea_type == 2) {
     /// Never happen
   }
@@ -147,7 +147,7 @@ std::vector<int64_t> FeaHash::FeaRegister(
     std::vector<int64_t> fea_id;
     fea_id.resize(fea_value.size());
     for (int32_t i = 0; i < fea_value.size(); ++i) {
-      fea_id[i] = std::stoi( std::to_string(slot_id) + std::to_string(i) );
+      fea_id[i] = std::stoi( std::to_string(slot_id) + this->BucketID2BucketCode(i) );
     }
     return fea_id;
   }

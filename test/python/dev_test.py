@@ -36,8 +36,8 @@ def main():
     print("fea11#val2", fea11val2_id)
 
 
-    libsvm_extractor = pyfeather.LibsvmExtractor("../conf/feather.conf", False)
-    record1 = "{\"fea1\":2, \"fea2\": \"a\", \"fea8\": \"123\", \"fea10\": 3.14}"
+    libsvm_extractor = pyfeather.LibsvmExtractor("../conf/feather.conf", "ctr", False)
+    record1 = "{\"fea1\":2, \"fea2\": \"a\", \"fea8\": \"123\", \"fea10\": 3.14, \"fea11\": [2.3, 1.4, 3.5, 6.8], \"ctr\": 1}"
     #print(record1)
     print(libsvm_extractor.Extract(record1))
 
