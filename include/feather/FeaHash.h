@@ -12,6 +12,7 @@
 #include <pybind11/pybind11.h>
 
 #include "feather/FeaSlot.h"
+#include "feather/FeaValue.h"
 
 namespace py = pybind11;
 
@@ -36,14 +37,18 @@ class FeaHash {
 
   const nlohmann::json& GetMeta();
 
+  int16_t FeaValCheck(const std::string& name);
+  int16_t FeaValCheck(const std::string& name, FeaValue* val);
+
   void Merge(FeaHash fea_hash);
 
  protected:
-  /**
-   * @brief Only works for discrete feature.
-   */
-  std::vector<int64_t> Fea2FeaID(const std::string& name, const std::string& val);
-  std::string BucketID2BucketCode(const int32_t bucket_id);
+  std::vector<int32_t> FeaVal2FeaHashBucket(FeaValue* fea_val, FeaSlot* fea_slot);
+
+  /// for example, bucket id could be 35, bucket code could be '00035'.
+  std::vector<std::string> FeaVal2FeaHashBucketCode(FeaValue* fea_val, FeaSlot* fea_slot);
+
+  std::vector<int64_t> FeaVal2FeaHash(FeaValue* fea_val, FeaSlot* fea_slot);
  
  private:
   std::string conf_path;

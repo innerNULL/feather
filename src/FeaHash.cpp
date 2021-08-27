@@ -1,6 +1,7 @@
 /// file: core.cpp
 
 
+#include <cmath>
 #include <iostream>
 #include <fstream>
 #include <algorithm>
@@ -11,6 +12,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
+#include "feather/utils.h"
 #include "feather/FeaHash.h"
 
 namespace py = pybind11;
@@ -51,42 +53,6 @@ FeaHash::FeaHash(const std::string& conf_path) {
 }
 
 
-std::string FeaHash::BucketID2BucketCode(const int32_t bucket_id) {
-  std::string bucket_id_str = std::to_string(bucket_id);
-  if (bucket_id_str.size() == this->val_hash_digits) {
-    return bucket_id_str;
-  } else if (bucket_id_str.size() < this->val_hash_digits) {
-    std::string zero_sup(this->val_hash_digits - bucket_id_str.size(), '0');
-    return zero_sup + bucket_id_str;
-  } else {
-    /// This should never happen
-    throw "Max bucket-code digits number should not larget than the size of largets slot-id.";
-  } 
-}
-
-
-std::vector<int64_t> FeaHash::Fea2FeaID(
-    const std::string& name, const std::string& val) {
-  std::vector<int64_t> fea_id;
-  std::string fea_id_str;
-  FeaSlot* fea_slot = &(this->name2slot[name]);
-  int16_t fea_type = this->fea_hash["slots"][name]["type"]; 
-  int32_t slot_id = fea_slot->GetSlotID();
-  int32_t bucket_id = fea_slot->GetBucketID(val);
-
-  if (fea_type == 0) {
-    fea_id_str = std::to_string(slot_id) + this->BucketID2BucketCode(bucket_id);
-  } else if (fea_type == 1) {
-    //fea_id_str = std::to_string(slot_id) + std::string(this->val_hash_digits, '0');
-    fea_id_str = std::to_string(slot_id) + this->BucketID2BucketCode(0);
-  } else if (fea_type == 2) {
-    /// Never happen
-  }
-  fea_id.emplace_back(std::stol(fea_id_str));
-  return fea_id;
-}
-
-
 int32_t FeaHash::SlotRegister(const std::string& fea_name, 
     const int32_t slot_id, const int32_t bucket_size, 
     const int16_t slot_type) {
@@ -107,55 +73,121 @@ int32_t FeaHash::SlotRegister(const std::string& fea_name,
 }
 
 
+int16_t FeaHash::FeaValCheck(const std::string& name) {
+  if (this->name2slot.find(name) == this->name2slot.end()) {
+    throw "Feature " + name + " should be registered to a slot first";
+  } 
+  return 0;
+}
+
+
+int16_t FeaHash::FeaValCheck(
+    const std::string& name, FeaValue* val) {
+  if (this->FeaValCheck(name) != 0) {
+    return this->FeaValCheck(name);
+  } else if (val->GetType() == 2 && val != nullptr) {
+    if (this->name2slot[name].GetBucketSize() 
+        != val->GetVecValue()->size()) {
+      throw "Size or vector feature " + name 
+          + " should be same with its slot's bucket-size.";  
+    }
+  }
+  return 0;
+}
+
+
 std::vector<int64_t> FeaHash::FeaRegister(
     const std::string& fea_name, const std::string& fea_value) {
-  if (this->name2slot.find(fea_name) == this->name2slot.end()) {
-    throw "Feature " + fea_name + " should be registered to a slot first";
+  std::vector<int64_t> fea_val_hash;
+  if (this->FeaValCheck(fea_name) == 0) {
+    FeaSlot* fea_slot_ = &(this->name2slot[fea_name]);
+    FeaValue fea_value_(fea_value);
+    fea_val_hash = this->FeaVal2FeaHash(&fea_value_, fea_slot_);
   }
-  FeaSlot* slot = &(this->name2slot[fea_name]);
-  if (this->fea_hash["slots"][fea_name]["type"] == 0) {
-    int64_t val_hash = std::hash<std::string>()(fea_value);
-    this->name2slot.find(fea_name)->second.ValRegister(fea_value, val_hash);
-    return this->Fea2FeaID(fea_name, fea_value);
-  } else if (this->fea_hash["slots"][fea_name]["type"] == 1) {
-    return this->Fea2FeaID(fea_name, fea_value);
-  } else {
-    throw "Feature " + fea_name + " should be registered as type 0 or 1."; 
-  }
+  return fea_val_hash;
 }
 
 
 std::vector<int64_t> FeaHash::FeaRegister(
     const std::string& fea_name, const float fea_value) {
-  if (this->name2slot.find(fea_name) != this->name2slot.end()) {
-    return this->Fea2FeaID(fea_name, std::to_string(fea_value)); 
-  } else {
-    throw "Feature " + fea_name + " should be registered to a slot first";
+  std::vector<int64_t> fea_val_hash;
+  if (this->FeaValCheck(fea_name) == 0) {
+    FeaSlot* fea_slot_ = &(this->name2slot[fea_name]);
+    FeaValue fea_value_(fea_value);
+    fea_val_hash = this->FeaVal2FeaHash(&fea_value_, fea_slot_);
   }
+  return fea_val_hash;
 }
 
 
 std::vector<int64_t> FeaHash::FeaRegister(
     const std::string& fea_name, const std::vector<float>& fea_value) {
-  if (this->name2slot.find(fea_name) == this->name2slot.end()) {
-    throw "Feature " + fea_name + " should be registered to a slot first";
-  } else if (this->name2slot[fea_name].GetBucketSize() != fea_value.size()) {
-    throw "Size or array feature " + fea_name 
-        + " should be same with its registered slot's bucket-size.";  
-  } else {
-    int32_t slot_id = this->name2slot[fea_name].GetSlotID();
-    std::vector<int64_t> fea_id;
-    fea_id.resize(fea_value.size());
-    for (int32_t i = 0; i < fea_value.size(); ++i) {
-      fea_id[i] = std::stoi( std::to_string(slot_id) + this->BucketID2BucketCode(i) );
-    }
-    return fea_id;
+  std::vector<int64_t> fea_val_hash;
+  FeaValue fea_value_(fea_value);
+  if (this->FeaValCheck(fea_name, &fea_value_) == 0) {
+    FeaSlot* fea_slot_ = &(this->name2slot[fea_name]);
+    fea_val_hash = this->FeaVal2FeaHash(&fea_value_, fea_slot_);
   }
+  return fea_val_hash;
 }
 
 
 const nlohmann::json& FeaHash::GetMeta() {
   return this->fea_hash;
+}
+
+
+std::vector<int32_t> FeaHash::FeaVal2FeaHashBucket(
+    FeaValue* fea_val, FeaSlot* fea_slot) {
+  std::vector<int32_t> hash_bucket_id;
+  std::vector<int64_t> fea_hash = fea_val->GetHash();
+
+  hash_bucket_id.resize(fea_hash.size());
+  if (fea_val->GetType() == 1 && (
+      fea_hash.size() != 1 || fea_slot->GetBucketSize() != 1)) {
+    throw "Continuous feature's hash-bucket size must be 1";
+  }
+  if (fea_val->GetType() == 2 
+      && fea_hash.size() != fea_slot->GetBucketSize()) {
+    throw "Vector feature's hash-bucket size must be same to its dim";
+  }
+  /// TODO@202108271359: Using SSE or AVX
+  for (int32_t i=0; i < fea_hash.size(); ++i) {
+    /// TODO@202108271400: Too much memory for id style feature.
+    // hash_bucket_id[i] = fea_slot->ValRegister(
+    //     fea_val->GetDescreteValue(), fea_hash[i]); 
+    hash_bucket_id[i] = abs(fea_hash[i] % fea_slot->GetBucketSize()); 
+  }
+  return hash_bucket_id;
+}
+
+
+std::vector<std::string> FeaHash::FeaVal2FeaHashBucketCode(
+    FeaValue* fea_val, FeaSlot* fea_slot) {
+  std::vector<std::string> fea_bucket_code;
+  std::vector<int32_t> hash_bucket_id = this->FeaVal2FeaHashBucket(
+      fea_val, fea_slot);
+  fea_bucket_code.resize(hash_bucket_id.size());
+  for (int32_t i = 0; i < hash_bucket_id.size(); ++i) {
+    fea_bucket_code[i] = num2str_code<int32_t>(
+        hash_bucket_id[i], this->val_hash_digits);
+  }
+  return fea_bucket_code;
+}
+
+
+std::vector<int64_t> FeaHash::FeaVal2FeaHash(
+    FeaValue* fea_val, FeaSlot* fea_slot) {
+  std::vector<int64_t> fea_val_hash;
+  int32_t slot_id = fea_slot->GetSlotID();
+  std::vector<std::string> fea_bucket_code = this->FeaVal2FeaHashBucketCode(
+      fea_val, fea_slot);
+  fea_val_hash.resize(fea_bucket_code.size());
+  for (int32_t i = 0; i < fea_bucket_code.size(); ++i) {
+    fea_val_hash[i] = std::stol(
+        std::to_string(slot_id) + fea_bucket_code[i]);
+  }
+  return fea_val_hash;
 }
 
 

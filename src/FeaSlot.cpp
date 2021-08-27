@@ -30,8 +30,9 @@ void FeaSlot::Info() {
 
 int32_t FeaSlot::ValRegister(
     const std::string val, const int64_t val_hash) {
+  int32_t bucket_id = -1;
   if (this->slot_type == 0) {
-    int32_t bucket_id = abs(val_hash % this->bucket_size);
+    bucket_id = abs(val_hash % this->bucket_size);
 
     if (this->val2bucket.find(val) == this->val2bucket.end()) {
       this->val2bucket.emplace(val, bucket_id);
@@ -44,18 +45,18 @@ int32_t FeaSlot::ValRegister(
         "Continuous or Array feature '{0}' do not needs registeration.", 
         this->name);
   } 
-  return 0;
+  return bucket_id;
 }
 
 
-int32_t FeaSlot::GetBucketID(const std::string& val) {
+std::vector<int32_t> FeaSlot::GetBucketID(const std::string& val) {
   if (this->slot_type != 0) {
     spdlog::warn(
         "Continuous or Array feature '{0}' doesn't have bucket-id.", 
         this->name);
-    return -1;
+    return {-1};
   } else {
-    return this->val2bucket[val];
+    return {this->val2bucket[val]};
   }
 }
 
@@ -71,7 +72,9 @@ void FeaSlot_pybind(py::module &m) {
       .def(py::init<const std::string&, const int32_t, const int32_t, const int8_t>())
       .def("Info", &FeaSlot::Info)
       .def("ValRegister", &FeaSlot::ValRegister)
-      .def("GetBucketID", &FeaSlot::GetBucketID);
+      .def("GetBucketID", 
+          static_cast< std::vector<int32_t>  (FeaSlot::*)(
+            const std::string&) >(&FeaSlot::GetBucketID));
 }
 
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# file: dev_test.py
+# file: example.py
 
 import pyfeather
 
@@ -38,8 +38,13 @@ def main():
 
     libsvm_extractor = pyfeather.LibsvmExtractor("../conf/feather.conf", "ctr", False)
     record1 = "{\"fea1\":2, \"fea2\": \"a\", \"fea8\": \"123\", \"fea10\": 3.14, \"fea11\": [2.3, 1.4, 3.5, 6.8], \"ctr\": 1}"
-    #print(record1)
-    print(libsvm_extractor.Extract(record1))
+    print(record1)
+    target = \
+        "1.000000 10100025:1 11000000:3.140000 11100000:2.300000 11100001:1.400000 11100002:3.500000 11100003:6.800000 10200026:1 10805285:1"
+    output = libsvm_extractor.Extract(record1)
+    print(target)
+    print(output)
+    print(output.strip(" ") == target)
 
 
 if __name__ == "__main__":

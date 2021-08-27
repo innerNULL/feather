@@ -57,9 +57,10 @@ aux_source_directory(${PROJECT_SOURCE_DIR}/src LIB_SOURCE)
 add_library(feather STATIC ${LIB_SOURCE})
 
 
-add_executable(main "main.cpp")
-target_link_libraries(main PRIVATE feather)
-target_link_libraries(main PRIVATE absl::strings)
+add_executable(example "./example.cpp")
+target_link_libraries(example PRIVATE feather)
+target_link_libraries(example PRIVATE pybind11::module pybind11::lto pybind11::windows_extras pybind11::embed)
+target_link_libraries(example PRIVATE absl::strings)
 
 pybind11_add_module(pyfeather ${LIB_SOURCE})
 target_link_libraries(pyfeather PRIVATE absl::strings)

@@ -9,8 +9,9 @@
 #include <unordered_map>
 #include <memory>
 #include <vector>
-
 #include <pybind11/pybind11.h>
+
+#include "./FeaValue.h"
 
 namespace py = pybind11;
 
@@ -31,10 +32,17 @@ class FeaSlot {
       const int32_t bucket_size, const int8_t slot_type=0);
 
   void Info();
+  
   int32_t ValRegister(const std::string val, const int64_t val_hash);
-  int32_t GetBucketID(const std::string& val);
+  
+  /// Depreciated.
+  std::vector<int32_t> GetBucketID(const std::string& val);
+  std::vector<int32_t> GetBucketID(const FeaValue& fea_val);
+  
   int32_t GetSlotID();
+  
   int32_t GetBucketSize();
+  
   void Merge(FeaSlot fea_slot);
 
  private:
