@@ -28,7 +28,7 @@ FeaHash::FeaHash() {
 }
 
 
-FeaHash::FeaHash(const std::string& conf_path) {
+FeaHash::FeaHash(const std::string& conf_path, const bool reversible) {
   spdlog::info("Initializing `FeaHash` with config '{0}'...", conf_path);
   //this->fea_hash["meta"]["conf_path"] = conf_path;
 
@@ -37,22 +37,39 @@ FeaHash::FeaHash(const std::string& conf_path) {
   int32_t slot_digits = -1;
   while (std::getline(conf_file, line)) {
     std::vector<std::string> conf_line = absl::StrSplit(line, " ");
-    this->dict_->Register({conf_line[0], conf_line[1]});
-    /* Not used for now
-    this->fea_hash["slots"][conf_line[0]] = {};
-    this->fea_hash["slots"][conf_line[0]]["id"] = std::stoi(conf_line[1]);
-    this->fea_hash["slots"][conf_line[0]]["bucket_num"] = std::stoi(conf_line[2]);
-    this->fea_hash["slots"][conf_line[0]]["type"] = std::stoi(conf_line[3]);
-    */
+    this->slot2name_dict_->Register({conf_line[0], conf_line[1]});
 
     if (slot_digits != -1 && conf_line[1].size() != slot_digits) {
       throw "Slot ID illegal, each slot-id string should has same length/digits.";
     }
     slot_digits = conf_line[1].size();
-
     this->SlotRegister(conf_line[0], std::stoi(conf_line[1]), 
         std::stoi(conf_line[2]), std::stoi(conf_line[3]));
   }
+  if (reversible) { this->Hash2IndexDictBuild(conf_path); }
+}
+
+
+void FeaHash::Hash2IndexDictBuild(const std::string& conf_path) {
+  std::string line;
+  std::ifstream conf_file(conf_path);
+  int32_t count = 1; // index recorder.
+  while (std::getline(conf_file, line)) {
+    std::vector<std::string> conf_line = absl::StrSplit(line, " ");
+    int64_t slot_id = std::stoi(conf_line[1]);
+    int32_t bucket_num = std::stoi(conf_line[2]);
+    for (int32_t i = 0; i < bucket_num; ++i) {
+      int64_t fea_hash = slot_id * pow(10, this->val_hash_digits) + i;
+      this->hash2index_dict_->Register(
+          {std::to_string(fea_hash), std::to_string(count++)});
+    }
+  }
+}
+
+
+std::string FeaHash::FeaHash2FeaIndex(const int64_t fea_hash) {
+  return this->hash2index_dict_->Map(
+      "fea_hash", "fea_index", std::to_string(fea_hash))[0];
 }
 
 
@@ -155,7 +172,7 @@ std::string FeaHash::FeaHash2FeaName(const int64_t fea_hash) {
   std::string fea_hash_str = std::to_string(fea_hash);
   std::string slot = fea_hash_str.substr(
       0, fea_hash_str.size() - this->val_hash_digits);
-  return this->dict_->Map("slot", "fea_name", slot)[0];
+  return this->slot2name_dict_->Map("slot", "fea_name", slot)[0];
 }
 
 
@@ -164,9 +181,11 @@ const std::unordered_map<std::string, FeaSlot>* FeaHash::GetSlots() {
 }
 
 
+/*
 const nlohmann::json& FeaHash::GetMeta() {
   return this->fea_hash;
 }
+*/
 
 
 std::vector<int32_t> FeaHash::FeaVal2FeaHashBucket(

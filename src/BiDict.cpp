@@ -1,5 +1,7 @@
 /// file: BiDict.cpp
 
+#include <iostream>
+#include <spdlog/spdlog.h>
 
 #include "feather/BiDict.h"
 
@@ -63,7 +65,7 @@ std::vector<std::string> BiDict::Map(
   } else if (
       this->dicts_[using_dict].find(key) == this->dicts_[using_dict].end()
   ) {
-    throw ("In inner dict '" + using_dict + "', no key " + key);
+    spdlog::error("In inner dict '" + using_dict + "', no key " + key);
   } else {
     value = this->dicts_[using_dict][key];
   }

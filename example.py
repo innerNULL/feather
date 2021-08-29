@@ -56,7 +56,8 @@ def main():
     print("output1:\n" + output1)
     print("output2:\n" + output2)
     print(output1.strip(" ") == target)
-    print(output2.strip(" ") == target)  
+    print(output2.strip(" ") == target) 
+
 
     # Map fea-hash back to fea-group
     hash2name_1 = fea_hash.FeaHash2FeaName(10100025)
@@ -68,6 +69,10 @@ def main():
     hash2name_10 = fea_hash.FeaHash2FeaName(11000000)
     print("11000000 is fea-hash of %s" % hash2name_10)
 
+
+    libsvm_extractor = pyfeather.LibsvmExtractor("../conf/feather.conf", "ctr", True)
+    output1_idx = libsvm_extractor.Extract(record1) 
+    print("output1_idx:\n" + output1_idx)
 
 if __name__ == "__main__":
     main()
