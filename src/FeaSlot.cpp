@@ -63,6 +63,7 @@ std::vector<int32_t> FeaSlot::GetBucketID(const std::string& val) {
 
 int32_t FeaSlot::GetSlotID() { return this->slot_id; } 
 
+int8_t FeaSlot::GetType() const { return this->slot_type; } 
 
 int32_t FeaSlot::GetBucketSize() { return this->bucket_size; }
 

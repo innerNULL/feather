@@ -5,12 +5,14 @@
 #define FEATHER_FEAHASH_H_
 
 
+#include <memory>
 #include <functional>
 #include <string>
 #include <vector>
 #include <nlohmann/json.hpp>
 #include <pybind11/pybind11.h>
 
+#include "feather/BiDict.h"
 #include "feather/FeaSlot.h"
 #include "feather/FeaValue.h"
 
@@ -31,16 +33,22 @@ class FeaHash {
   std::vector<int64_t> FeaRegister(
       const std::string& fea_name, const std::string& fea_value);
   std::vector<int64_t> FeaRegister(
+      const std::string& fea_name, const int32_t fea_value);
+  std::vector<int64_t> FeaRegister(
       const std::string& fea_name, const std::vector<float>& fea_value);
   std::vector<int64_t> FeaRegister(
       const std::string& fea_name, const float fea_value);
 
+  std::string FeaHash2FeaName(const int64_t fea_hash);
+
   const nlohmann::json& GetMeta();
+
+  const std::unordered_map<std::string, FeaSlot>* GetSlots();
 
   int16_t FeaValCheck(const std::string& name);
   int16_t FeaValCheck(const std::string& name, FeaValue* val);
 
-  void Merge(FeaHash fea_hash);
+  //void Merge(FeaHash fea_hash);
 
  protected:
   std::vector<int32_t> FeaVal2FeaHashBucket(FeaValue* fea_val, FeaSlot* fea_slot);
@@ -52,6 +60,8 @@ class FeaHash {
  
  private:
   std::string conf_path;
+  std::vector<std::string> dict_schema_ = {"fea_name", "slot"};
+  std::shared_ptr<BiDict> dict_ = std::make_shared<BiDict>(this->dict_schema_);
   nlohmann::json fea_hash = {
       { "meta", {} }, 
       { "slots", {} }

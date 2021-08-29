@@ -35,16 +35,38 @@ def main():
     fea11val2_id = fea_hash.FeaRegister("fea11", [4.0, 3.0, 2.0, 1.0])
     print("fea11#val2", fea11val2_id)
 
+    fea12val1_1_id = fea_hash.FeaRegister("fea12", "1")
+    fea12val1_2_id = fea_hash.FeaRegister("fea12", 1)
+    print("fea12='1' vs fea12=1: ", fea12val1_1_id, fea12val1_2_id)
+
 
     libsvm_extractor = pyfeather.LibsvmExtractor("../conf/feather.conf", "ctr", False)
     record1 = "{\"fea1\":2, \"fea2\": \"a\", \"fea8\": \"123\", \"fea10\": 3.14, \"fea11\": [2.3, 1.4, 3.5, 6.8], \"ctr\": 1}"
-    print(record1)
+    record2 = "{\"fea1\":\"2\", \"fea2\": \"a\", \"fea8\": \"123\", \"fea10\": 3.14, \"fea11\": [2.3, 1.4, 3.5, 6.8], \"ctr\": 1}"
+    print("record1: \n", record1)
+    print("record2: \n", record2)
     target = \
         "1.000000 10100025:1 11000000:3.140000 11100000:2.300000 11100001:1.400000 11100002:3.500000 11100003:6.800000 10200026:1 10805285:1"
-    output = libsvm_extractor.Extract(record1)
-    print(target)
-    print(output)
-    print(output.strip(" ") == target)
+    target = target.split(" ")
+    target = [target[0]] + sorted(target[1:], key=lambda x: x.split(":")[0])
+    target = " ".join(target)
+    output1 = libsvm_extractor.Extract(record1)
+    output2 = libsvm_extractor.Extract(record2)  
+    print("target:\n" + target)
+    print("output1:\n" + output1)
+    print("output2:\n" + output2)
+    print(output1.strip(" ") == target)
+    print(output2.strip(" ") == target)  
+
+    # Map fea-hash back to fea-group
+    hash2name_1 = fea_hash.FeaHash2FeaName(10100025)
+    print("10100025 is fea-hash of %s" % hash2name_1)
+    hash2name_11_0 = fea_hash.FeaHash2FeaName(11100000)
+    print("11100000 is fea-hash of %s" % hash2name_11_0)
+    hash2name_11_3 = fea_hash.FeaHash2FeaName(11100003)
+    print("11100003 is fea-hash of %s" % hash2name_11_3)
+    hash2name_10 = fea_hash.FeaHash2FeaName(11000000)
+    print("11000000 is fea-hash of %s" % hash2name_10)
 
 
 if __name__ == "__main__":

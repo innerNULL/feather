@@ -8,6 +8,7 @@
 #include <string>
 #include <unordered_map>
 #include <pybind11/pybind11.h>
+#include <nlohmann/json.hpp>
 
 #include "feather/FeaExtractor.h"
 #include "feather/FeaHash.h"
@@ -28,6 +29,10 @@ class LibsvmExtractor : public FeaExtractor {
 
   std::string Extract(const std::string& flat_json);
   std::string Extract(const nlohmann::json& flat_json);
+
+ protected:
+  //FeaValue* JsonVal2FeaVal(
+  //    const int8_t type, const nlohmann::basic_json& val);
 
  private:
   std::string label;

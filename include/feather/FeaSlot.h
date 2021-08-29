@@ -43,6 +43,8 @@ class FeaSlot {
   
   int32_t GetBucketSize();
   
+  int8_t GetType() const;
+  
   void Merge(FeaSlot fea_slot);
 
  private:

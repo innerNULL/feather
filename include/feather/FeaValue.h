@@ -14,6 +14,7 @@ namespace feather {
 
 class FeaValue {
  public:
+  FeaValue() = default;    
   FeaValue(const int32_t val, const int16_t type=0);
   FeaValue(const float& val, const int16_t type=1);
   FeaValue(const double& val, const int16_t type=1);
