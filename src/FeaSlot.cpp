@@ -10,6 +10,13 @@
 namespace feather {
 
 
+FeaSlot::FeaSlot(const FeaSlot& copy) {
+  new (this) FeaSlot(
+      copy.GetName(), copy.GetSlotID(), copy.GetBucketSize(), 
+      copy.GetType());
+}
+
+
 FeaSlot::FeaSlot(const std::string& name, const int32_t slot_id, 
     const int32_t bucket_size, const int8_t slot_type) {
   this->name = name;
@@ -25,6 +32,11 @@ void FeaSlot::Info() {
   printf("\tslot_id: %i\n", this->slot_id);
   printf("\tbucket_size: %i\n", this->bucket_size);
   printf("\tslot_type: %i\n", this->slot_type);
+}
+
+
+std::string FeaSlot::GetName() const {
+  return this->name;
 }
 
 
@@ -61,11 +73,11 @@ std::vector<int32_t> FeaSlot::GetBucketID(const std::string& val) {
 }
 
 
-int32_t FeaSlot::GetSlotID() { return this->slot_id; } 
+int32_t FeaSlot::GetSlotID() const { return this->slot_id; } 
 
 int8_t FeaSlot::GetType() const { return this->slot_type; } 
 
-int32_t FeaSlot::GetBucketSize() { return this->bucket_size; }
+int32_t FeaSlot::GetBucketSize() const { return this->bucket_size; }
 
 
 void FeaSlot_pybind(py::module &m) {

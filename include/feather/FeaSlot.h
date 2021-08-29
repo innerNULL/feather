@@ -22,6 +22,7 @@ namespace feather {
 class FeaSlot {
  public:
   FeaSlot() = default;
+  FeaSlot(const FeaSlot& copy);
   /**
    * @brief
    * For float array, bucket_size MUST equals to array size.
@@ -39,11 +40,13 @@ class FeaSlot {
   std::vector<int32_t> GetBucketID(const std::string& val);
   std::vector<int32_t> GetBucketID(const FeaValue& fea_val);
   
-  int32_t GetSlotID();
+  int32_t GetSlotID() const;
   
-  int32_t GetBucketSize();
+  int32_t GetBucketSize() const;
   
   int8_t GetType() const;
+
+  std::string GetName() const;
   
   void Merge(FeaSlot fea_slot);
 

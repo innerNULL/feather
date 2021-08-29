@@ -30,9 +30,11 @@ class LibsvmExtractor : public FeaExtractor {
   std::string Extract(const std::string& flat_json);
   std::string Extract(const nlohmann::json& flat_json);
 
+  std::string ExtractLabel(const nlohmann::json& flat_json);
+
  protected:
-  //FeaValue* JsonVal2FeaVal(
-  //    const int8_t type, const nlohmann::basic_json& val);
+  FeaValue* JsonVal2FeaVal(
+      const int8_t type, const nlohmann::json& json_val);
 
  private:
   std::string label;

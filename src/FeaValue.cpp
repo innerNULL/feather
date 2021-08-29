@@ -145,6 +145,11 @@ const std::vector<float>* FeaValue::GetVecValue() {
 }
 
 
+const float FeaValue::GetContinuous() {
+  return this->continuous_val;
+}
+
+
 const int16_t FeaValue::GetType() { return this->type; }
 
 

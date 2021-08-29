@@ -33,6 +33,7 @@ class FeaValue {
   const int16_t GetType();
 
   const std::vector<float>* GetVecValue();
+  const float GetContinuous();
 
  private:
   int16_t type = -1;

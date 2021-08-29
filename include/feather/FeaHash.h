@@ -48,6 +48,8 @@ class FeaHash {
   int16_t FeaValCheck(const std::string& name);
   int16_t FeaValCheck(const std::string& name, FeaValue* val);
 
+  std::vector<int64_t> FeaVal2FeaHash(FeaValue* fea_val, FeaSlot* fea_slot);
+
   //void Merge(FeaHash fea_hash);
 
  protected:
@@ -55,8 +57,6 @@ class FeaHash {
 
   /// for example, bucket id could be 35, bucket code could be '00035'.
   std::vector<std::string> FeaVal2FeaHashBucketCode(FeaValue* fea_val, FeaSlot* fea_slot);
-
-  std::vector<int64_t> FeaVal2FeaHash(FeaValue* fea_val, FeaSlot* fea_slot);
  
  private:
   std::string conf_path;
