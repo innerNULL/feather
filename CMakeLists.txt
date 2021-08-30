@@ -7,11 +7,16 @@ project(example)
 
 
 set(CMAKE_BUILD_TYPE "Debug")
+#set(CMAKE_CXX_FLAGS " -pthread -std=c++14 -funroll-loops -O3 -march=native -fPIC")
 set(CMAKE_CXX_FLAGS " -pthread -std=c++14 -funroll-loops -O3 -march=native")
 set(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb")
 set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 
-set(PYTHON_EXECUTABLE "/usr/local/bin/python3") 
+option(BUILD_TESTS "Build tests" OFF)
+execute_process(COMMAND bash -c "which python3" OUTPUT_VARIABLE PYTHON3_ENV)
+string(REPLACE "\n" "" PYTHON3_ENV ${PYTHON3_ENV})
+#set(PYTHON_EXECUTABLE "/usr/local/bin/python3")
+set(PYTHON_EXECUTABLE ${PYTHON3_ENV})
 
 
 # Download cmakeup as pkg management.
@@ -47,6 +52,8 @@ cmakeup_integrate_gabime_spdlog("v1.x" "null" "global")
 cmakeup_pkg_cmake_importer("nlohmann" "json")
 cmakeup_integrate_nlohmann_json("master" "null" "global")
 
+message(STATUS "Default python environment is ${PYTHON3_ENV}")
+message(STATUS "Target python environment is ${PYTHON_EXECUTABLE}")
 execute_process(COMMAND bash -c "${CMAKEUP_VCPKG_BIN} install pybind11")
 find_package(pybind11 CONFIG REQUIRED)
 include_directories(${pybind11_INCLUDE_DIRS})
@@ -64,3 +71,8 @@ target_link_libraries(example PRIVATE absl::strings)
 
 pybind11_add_module(pyfeather ${LIB_SOURCE})
 target_link_libraries(pyfeather PRIVATE absl::strings)
+
+if (BUILD_TESTS)
+  message(STATUS "Building with unit-tests.")
+  add_subdirectory(./test/cpp)
+endif()

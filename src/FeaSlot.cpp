@@ -19,6 +19,10 @@ FeaSlot::FeaSlot(const FeaSlot& copy) {
 
 FeaSlot::FeaSlot(const std::string& name, const int32_t slot_id, 
     const int32_t bucket_size, const int8_t slot_type) {
+  if (slot_type == 1 && bucket_size != 1) {
+    spdlog::error(
+        "The bucket-size of type 1 slot (continuous feature slot) must be 1.");
+  }
   this->name = name;
   this->slot_id = slot_id;
   this->bucket_size = bucket_size;
