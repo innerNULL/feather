@@ -52,7 +52,10 @@ class FeaHash {
 
   std::vector<int64_t> FeaVal2FeaHash(FeaValue* fea_val, FeaSlot* fea_slot);
 
-  //void Merge(FeaHash fea_hash);
+  const FeaSlot* GetSlot(const std::string& fea_name);
+  const FeaSlot* GetSlot(const int32_t fea_slot); // TODO
+
+  //void Transfer();
 
  protected:
   std::vector<int32_t> FeaVal2FeaHashBucket(FeaValue* fea_val, FeaSlot* fea_slot);

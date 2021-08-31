@@ -73,6 +73,15 @@ std::string FeaHash::FeaHash2FeaIndex(const int64_t fea_hash) {
 }
 
 
+const FeaSlot* FeaHash::GetSlot(const std::string& fea_name) {
+  FeaSlot* slot = nullptr;
+  if (this->name2slot.find(fea_name) != this->name2slot.end()) {
+    slot = &(this->name2slot[fea_name]);
+  }
+  return slot;
+}
+
+
 int32_t FeaHash::SlotRegister(const std::string& fea_name, 
     const int32_t slot_id, const int32_t bucket_size, 
     const int16_t slot_type) {
@@ -207,7 +216,7 @@ std::vector<int32_t> FeaHash::FeaVal2FeaHashBucket(
     /// TODO@202108271400: Too much memory for id style feature.
     // hash_bucket_id[i] = fea_slot->ValRegister(
     //     fea_val->GetDescreteValue(), fea_hash[i]); 
-    hash_bucket_id[i] = abs(fea_hash[i] % fea_slot->GetBucketSize()); 
+    hash_bucket_id[i] = abs(fea_hash[i]) % fea_slot->GetBucketSize(); 
   }
   return hash_bucket_id;
 }
