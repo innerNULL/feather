@@ -1,8 +1,12 @@
 # feather
 FEATure HashER 
 
-## Installation
-* Python  
+
+## Build & Install
+* CPP
+Run `cmake ../ -DBUILD_TESTS=ON` or `cmake ../`
+
+* Python with pip  
 Run `cd feather && python3 -m pip install ./`, here is what you may see:  
 ```
 Processing /Path/To/feather                                                                                        Building wheels for collected packages: pyfeather
@@ -12,6 +16,13 @@ Stored in directory: /private/var/folders/4q/50_2647d1yb47jt9j6plwx2r0000gq/T/pi
 Successfully built pyfeather                                                                                                                         Installing collected packages: pyfeather
 Successfully installed pyfeather-0.0.1  
 ```
+
+* Python with poetry
+Run
+```bash
+cd feather && poetry run python -m pip install ./ -vvv
+```
+
 
 ## Feature Hashing
 ### Notions
@@ -47,7 +58,7 @@ Define in `FeaHash`. There is a config which defines schema of target features, 
 * **Feature Extractor**  
 The base class is `FeaExtractor`, but the mainly using case is mapping feature's hash-id/index and value (in continuous and vector feature case) to libsvm format, which can be done by `LibSVMExtractor`.
 
-* **Bucket-ID and Bucket-Code**
+* **Bucket-ID and Bucket-Code**  
 Briefly, **Bucket-ID** is `int32_t`, **Bucket-Code** is `std::string` which digits/length should be fixed. Here are some example about mapping bucket-id to bucket-code, which all bucket-code has 5 digits:  
     * bucket-id: 5 -> bucket-code: '00005'  
     * bucket-id: 54234 -> bucket-code: '54234'  

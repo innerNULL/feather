@@ -66,6 +66,7 @@ class CMakeBuild(build_ext):
                     pass
 
         else:
+            build_args = build_args + ["-DPYTHON_EXECUTABLE={}".format(sys.executable)]
 
             # Single config generators are handled "normally"
             single_config = any(x in cmake_generator for x in {"NMake", "Ninja"})
@@ -115,11 +116,11 @@ class CMakeBuild(build_ext):
 setup(
     name="pyfeather",
     version="0.0.1",
-    author="renan",
+    author="innerNULL",
     author_email="",
-    description="A test project using pybind11 and CMake",
+    description="A project makes feature-hash easier.",
     long_description="",
-    ext_modules=[CMakeExtension("feather")],
+    ext_modules=[CMakeExtension("pyfeather")],
     cmdclass={"build_ext": CMakeBuild},
     zip_safe=False,
     extras_require={"test": ["pytest"]},
