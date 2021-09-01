@@ -21,7 +21,79 @@ feather::FeaHash feahash(FEATHER_CONF);
 
 
 TEST(TEST_FeaHash, FeaHash) {
-  feather::FeaHash feahash(FEATHER_CONF);
+  feather::FeaHash feahash_(FEATHER_CONF);
+  ASSERT_THAT(feahash_.GetFeaBucketCodeLength(), 5);
+
+  /// Fea1 test, discrete-feature, type 0.
+  const feather::FeaSlot* slot101 = feahash_.GetSlot("fea1");
+  ASSERT_THAT(slot101->GetSlotID(), 101);
+  ASSERT_THAT(slot101->GetBucketSize(), 100); 
+
+  std::vector<int64_t> fea1_str128_hash = feahash_.FeaRegister("fea1", "128");
+  std::vector<int64_t> fea1_int128_hash = feahash_.FeaRegister("fea1", 128);
+  int64_t str128_hash = std::hash<std::string>()("128");
+  int64_t fea1_str128_target_hash = feahash_generator(
+      str128_hash, slot101->GetSlotID(), slot101->GetBucketSize(), 
+      feahash_.GetFeaBucketCodeLength());
+  ASSERT_THAT(fea1_str128_hash.size(), 1);
+  ASSERT_THAT(fea1_str128_hash[0], fea1_str128_target_hash);
+  ASSERT_THAT(fea1_int128_hash[0], fea1_str128_target_hash);
+  ASSERT_THAT(fea1_str128_hash, fea1_int128_hash);
+  /// Fea1 tmp test for dev and check twice
+  std::vector<int64_t> fea1_val1_hash = feahash_.FeaRegister("fea1", "val1");
+  std::vector<int64_t> fea1_val2_hash = feahash_.FeaRegister("fea1", "val2");
+  int64_t val1_hash = std::hash<std::string>()("val1");
+  int64_t val2_hash = std::hash<std::string>()("val2");
+  int64_t target_fea1val1_hash = feahash_generator(
+        val1_hash, slot101->GetSlotID(), slot101->GetBucketSize(), 
+        feahash_.GetFeaBucketCodeLength());
+  int64_t target_fea1val2_hash = feahash_generator(
+        val2_hash, slot101->GetSlotID(), slot101->GetBucketSize(), 
+        feahash_.GetFeaBucketCodeLength());
+  ASSERT_THAT(fea1_val1_hash.size(), 1);
+  ASSERT_THAT(fea1_val2_hash.size(), 1);
+  ASSERT_THAT(fea1_val1_hash[0], target_fea1val1_hash);
+  ASSERT_THAT(fea1_val2_hash[0], target_fea1val2_hash);
+
+  /// Fea10 test, continuous-feature, type 1.
+  const feather::FeaSlot* slot110 = feahash_.GetSlot("fea10");
+  ASSERT_THAT(slot110->GetSlotID(), 110);
+  ASSERT_THAT(slot110->GetBucketSize(), 1); 
+
+  std::vector<int64_t> fea10_float3p14_hash = feahash_.FeaRegister("fea10", (float)3.14);
+  std::vector<int64_t> fea10_str3p14_hash = feahash_.FeaRegister("fea10", "3.14");
+  std::vector<int64_t> fea10_str3p15_hash = feahash_.FeaRegister("fea10", "3.15"); 
+  int64_t target_fea10_hash = 
+      slot110->GetSlotID() * pow(10, feahash_.GetFeaBucketCodeLength());
+  ASSERT_THAT(fea10_float3p14_hash.size(), 1);
+  ASSERT_THAT(fea10_float3p14_hash[0], target_fea10_hash);
+  ASSERT_THAT(fea10_float3p14_hash, fea10_str3p14_hash);
+  ASSERT_THAT(fea10_float3p14_hash, fea10_str3p15_hash);
+
+  /// Fea11 test, vector-feature, type 2.
+  const feather::FeaSlot* slot111 = feahash_.GetSlot("fea11");
+  ASSERT_THAT(slot111->GetSlotID(), 111);
+  ASSERT_THAT(slot111->GetBucketSize(), 4);
+  
+  std::vector<float> fea11_vec_1 = {4.0, 3.0, 2.0, 1.0};
+  std::vector<int64_t> fea11_vec_1_hash = feahash_.FeaRegister("fea11", fea11_vec_1);
+  ASSERT_THAT(fea11_vec_1_hash.size(), slot111->GetBucketSize());
+
+  for (int32_t i = 0; i < slot111->GetBucketSize(); ++i) {
+    int64_t target_feahash = 
+        slot111->GetSlotID() * pow(10, feahash_.GetFeaBucketCodeLength()) + i;
+    ASSERT_THAT(fea11_vec_1_hash[i], target_feahash);
+  }
+}
+
+
+TEST(TEST_FeaHash, GetFeaBucketCodeLength) {
+  feather::FeaHash feahash_;
+  feahash_.SlotRegister("test1", 101, 8, 0);
+  feahash_.SlotRegister("test2", 102, 1024, 0);
+  feahash_.SlotRegister("test3", 103, 1, 1);
+  feahash_.SlotRegister("test4", 104, 128, 2);
+  ASSERT_THAT(feahash_.GetFeaBucketCodeLength(), 4);
 }
 
 
@@ -63,7 +135,8 @@ TEST(TEST_FeaHash, SlotRegister) {
 
 
 TEST(TEST_FeaHash, FeaRegister) {
-  /// TODO: Test with demo fea-schema config
+  /// Test with demo fea-schema config
+  /// See `TEST(TEST_FeaHash, FeaHash)`
 
   /// Twice test
   feather::FeaHash feahash_;

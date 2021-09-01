@@ -197,6 +197,11 @@ const nlohmann::json& FeaHash::GetMeta() {
 */
 
 
+int32_t FeaHash::GetFeaBucketCodeLength() {
+  return this->val_hash_digits;
+}
+
+
 std::vector<int32_t> FeaHash::FeaVal2FeaHashBucket(
     FeaValue* fea_val, FeaSlot* fea_slot) {
   std::vector<int32_t> hash_bucket_id;

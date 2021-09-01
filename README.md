@@ -3,21 +3,36 @@ FEATure HashER
 
 
 ## Build & Install
-* CPP
-Run `cmake ../ -DBUILD_TESTS=ON` or `cmake ../`
-
-* Python with pip  
-Run `cd feather && python3 -m pip install ./`, here is what you may see:  
+* **CPP**  
+Run: 
+```bash
+cd  PATH/TO/FEATHER
+mkdir build && cd build
+cmake ../ -DBUILD_TESTS=ON` # build with test 
+#or 
+`cmake ../
 ```
-Processing /Path/To/feather                                                                                        Building wheels for collected packages: pyfeather
-Building wheel for pyfeather (setup.py) ... done                                                                                                     Created wheel for pyfeather:
+
+* **Python with pip**    
+Run: 
+```bash
+cd feather && python3 -m pip install ./ -vvv
+```
+
+here is what you may see:  
+```
+Processing /Path/To/feather                                                                                        
+Building wheels for collected packages: pyfeather
+Building wheel for pyfeather (setup.py) ... done  
+Created wheel for pyfeather:
 filename=pyfeather-0.0.1-cp37-cp37m-macosx_10_15_x86_64.whl size=1284474 sha256=e3f9d0be1e7578274f3fcecb854c1e66336a24985b8e6ff4213375d76463299e
 Stored in directory: /private/var/folders/4q/50_2647d1yb47jt9j6plwx2r0000gq/T/pip-ephem-wheel-cache-996awbes/wheels/0f/bd/93/b6936ec0c1169201de264147e21ae7e2bb894720b34bcdce79
-Successfully built pyfeather                                                                                                                         Installing collected packages: pyfeather
+Successfully built pyfeather
+Installing collected packages: pyfeather
 Successfully installed pyfeather-0.0.1  
 ```
 
-* Python with poetry
+* **Python with poetry**  
 Run
 ```bash
 cd feather && poetry run python -m pip install ./ -vvv
@@ -70,7 +85,5 @@ Each feature has a slot and hash-bucket size, the finally hash of this feature i
 by the way, in case we want adjust each feature-slot's hash-bucket size, we can maintain a hash-ring/consistant hash for each slot.
 
 ## TODO
-* Seperate classes' pybind codes, so when calling cpp interface, do not need linking pybind lib.
-* Supports mapping feature-hash to feather-index 
-* Mapping feature-index back to feature-hash
-* Mapping feature-hash back to feature name.
+* Seperate classes' pybind codes, so when calling cpp interface, do not need linking/building pybind lib.
+* Makes `FeaHash::Hash2IndexDictBuild` more solid. 

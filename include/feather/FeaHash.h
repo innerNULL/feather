@@ -55,6 +55,8 @@ class FeaHash {
   const FeaSlot* GetSlot(const std::string& fea_name);
   const FeaSlot* GetSlot(const int32_t fea_slot); // TODO
 
+  int32_t GetFeaBucketCodeLength();
+
   //void Transfer();
 
  protected:
