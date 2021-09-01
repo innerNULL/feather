@@ -15,30 +15,33 @@ set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 option(BUILD_TESTS "Build tests" OFF)
 execute_process(COMMAND bash -c "which python3" OUTPUT_VARIABLE PYTHON3_ENV)
 string(REPLACE "\n" "" PYTHON3_ENV ${PYTHON3_ENV})
-#set(PYTHON_EXECUTABLE "/usr/local/bin/python3")
 set(PYTHON_EXECUTABLE ${PYTHON3_ENV})
 
 
+execute_process(COMMAND bash -c "pwd" OUTPUT_VARIABLE CURR_DIR)
+string(REPLACE "\n" "" CURR_DIR ${CURR_DIR}) 
+message(STATUS "CURR_DIR: ${CURR_DIR}")
+
 # Download cmakeup as pkg management.
-if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/main.zip")
+if(EXISTS "${CURR_DIR}/main.zip")
     message(STATUS "cmakeup has been downloaded.")
 else()
     execute_process(
         COMMAND wget https://ghproxy.com/https://github.com/innerNULL/cmakeup/archive/refs/heads/main.zip
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/build)
+        WORKING_DIRECTORY ${CURR_DIR})
     execute_process(
-        COMMAND unzip main.zip WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/build)
+        COMMAND unzip main.zip WORKING_DIRECTORY ${CURR_DIR})
 endif()
-set(CMKAEUP_ROOT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/build/cmakeup-main/cmakeup")
+set(CMKAEUP_ROOT_PATH "${CURR_DIR}/cmakeup-main/cmakeup")
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMKAEUP_ROOT_PATH}/module")
 include(cmakeup)
-cmakeup_init("${CMAKE_CURRENT_SOURCE_DIR}/build/_cmakeup_hub" "https://ghproxy.com/https://github.com")
+cmakeup_init("${CURR_DIR}/_cmakeup_hub" "https://ghproxy.com/https://github.com")
 cmakeup_root_path_register(${CMKAEUP_ROOT_PATH})
 include(vcpkg_helpers)
 
 integrate_vcpkg(
     "https://ghproxy.com/https://github.com/microsoft/vcpkg/archive/refs/heads/master.zip"  
-    "${CMAKE_CURRENT_SOURCE_DIR}/build"
+    "${CURR_DIR}"
 )
 message(STATUS "All vcpkg pkg are installed under ${CMAKEUP_VCPKG_ROOT}/packages")
 

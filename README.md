@@ -4,21 +4,18 @@ FEATure HashER
 
 ## Build & Install
 * **CPP**  
-Run: 
 ```bash
 cd  PATH/TO/FEATHER
 mkdir build && cd build
-cmake ../ -DBUILD_TESTS=ON` # build with test 
+cmake ../ -DBUILD_TESTS=ON # build with test 
 #or 
-`cmake ../
+cmake ../
 ```
 
 * **Python with pip**    
-Run: 
 ```bash
 cd feather && python3 -m pip install ./ -vvv
 ```
-
 here is what you may see:  
 ```
 Processing /Path/To/feather                                                                                        
@@ -33,7 +30,6 @@ Successfully installed pyfeather-0.0.1
 ```
 
 * **Python with poetry**  
-Run
 ```bash
 cd feather && poetry run python -m pip install ./ -vvv
 ```
