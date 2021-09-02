@@ -127,6 +127,7 @@ int16_t FeaHash::FeaValCheck(
 
 std::vector<int64_t> FeaHash::FeaRegister(
     const std::string& fea_name, const std::string& fea_value) {
+  /** TODO@202109011527: Try using template func.
   std::vector<int64_t> fea_val_hash;
   int8_t fea_type = this->name2slot[fea_name].GetType();
   if (this->FeaValCheck(fea_name) == 0) {
@@ -135,11 +136,14 @@ std::vector<int64_t> FeaHash::FeaRegister(
     fea_val_hash = this->FeaVal2FeaHash(&fea_value_, fea_slot_);
   }
   return fea_val_hash;
+  */
+  return this->Fea2FeaHash<std::string>(fea_name, fea_value);
 }
 
 
 std::vector<int64_t> FeaHash::FeaRegister(
     const std::string& fea_name, const int32_t fea_value) {
+  /** TODO@202109011527: Try using template func.
   std::vector<int64_t> fea_val_hash;
   int8_t fea_type = this->name2slot[fea_name].GetType();
   if (this->FeaValCheck(fea_name) == 0) {
@@ -148,12 +152,15 @@ std::vector<int64_t> FeaHash::FeaRegister(
     fea_val_hash = this->FeaVal2FeaHash(&fea_value_, fea_slot_);
   }
   return fea_val_hash;
+  */
+  return this->Fea2FeaHash<int32_t>(fea_name, fea_value);
 }
 
 
 
 std::vector<int64_t> FeaHash::FeaRegister(
     const std::string& fea_name, const float fea_value) {
+  /** TODO@202109011527: Try using template func. 
   std::vector<int64_t> fea_val_hash;
   int8_t fea_type = this->name2slot[fea_name].GetType();
   if (this->FeaValCheck(fea_name) == 0) {
@@ -162,13 +169,65 @@ std::vector<int64_t> FeaHash::FeaRegister(
     fea_val_hash = this->FeaVal2FeaHash(&fea_value_, fea_slot_);
   }
   return fea_val_hash;
+  */
+  return this->Fea2FeaHash<float>(fea_name, fea_value);
 }
 
 
 std::vector<int64_t> FeaHash::FeaRegister(
     const std::string& fea_name, const std::vector<float>& fea_value) {
+  /** TODO@202109011527: Try using template func. 
   std::vector<int64_t> fea_val_hash;
-  FeaValue fea_value_(fea_value);
+  int8_t fea_type = this->name2slot[fea_name].GetType();
+  FeaValue fea_value_(fea_value, fea_type);
+  if (this->FeaValCheck(fea_name, &fea_value_) == 0) {
+    FeaSlot* fea_slot_ = &(this->name2slot[fea_name]);
+    fea_val_hash = this->FeaVal2FeaHash(&fea_value_, fea_slot_);
+  }
+  return fea_val_hash;
+  */
+  return this->Fea2FeaHash< std::vector<float> >(fea_name, fea_value);
+}
+
+
+std::vector<int64_t> FeaHash::FeaRegister(
+    const std::string& fea_name, const std::vector<std::string>& fea_value) {
+  /** TODO@202109011527: Try using template func.  
+  std::vector<int64_t> fea_val_hash;
+  int8_t fea_type = this->name2slot[fea_name].GetType();
+  FeaValue fea_value_(fea_value, fea_type);
+  if (this->FeaValCheck(fea_name, &fea_value_) == 0) {
+    FeaSlot* fea_slot_ = &(this->name2slot[fea_name]);
+    fea_val_hash = this->FeaVal2FeaHash(&fea_value_, fea_slot_);
+  }
+  return fea_val_hash;
+  */
+  return this->Fea2FeaHash< std::vector<std::string> >(fea_name, fea_value);
+}
+
+
+std::vector<int64_t> FeaHash::FeaRegister(
+    const std::string& fea_name, const std::vector<int32_t>& fea_value) {
+  /** TODO@202109011527: Try using template func.
+  std::vector<int64_t> fea_val_hash;
+  int8_t fea_type = this->name2slot[fea_name].GetType();
+  FeaValue fea_value_(fea_value, fea_type);
+  if (this->FeaValCheck(fea_name, &fea_value_) == 0) {
+    FeaSlot* fea_slot_ = &(this->name2slot[fea_name]);
+    fea_val_hash = this->FeaVal2FeaHash(&fea_value_, fea_slot_);
+  }
+  return fea_val_hash;
+  */
+  return this->Fea2FeaHash< std::vector<int32_t> >(fea_name, fea_value);
+}
+
+
+template<typename VAL_TYPE>
+std::vector<int64_t> FeaHash::Fea2FeaHash(
+    const std::string& fea_name, const VAL_TYPE& fea_value) {
+  std::vector<int64_t> fea_val_hash;
+  int8_t fea_type = this->name2slot[fea_name].GetType();
+  FeaValue fea_value_(fea_value, fea_type);
   if (this->FeaValCheck(fea_name, &fea_value_) == 0) {
     FeaSlot* fea_slot_ = &(this->name2slot[fea_name]);
     fea_val_hash = this->FeaVal2FeaHash(&fea_value_, fea_slot_);
@@ -273,7 +332,13 @@ void FeaHash_pybind(py::module& m) {
             const std::string&, const float)>(&FeaHash::FeaRegister))
       .def("FeaRegister", 
           static_cast<std::vector<int64_t> (FeaHash::*)(
-            const std::string&, const std::vector<float>&)>(&FeaHash::FeaRegister));
+            const std::string&, const std::vector<float>&)>(&FeaHash::FeaRegister))
+      .def("FeaRegister",
+          static_cast<std::vector<int64_t> (FeaHash::*)(
+            const std::string&, const std::vector<std::string>&)>(&FeaHash::FeaRegister))
+      .def("FeaRegister",
+          static_cast<std::vector<int64_t> (FeaHash::*)( 
+            const std::string&, const std::vector<int32_t>&)>(&FeaHash::FeaRegister));
 }
 
 

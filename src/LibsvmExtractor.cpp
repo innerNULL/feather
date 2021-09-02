@@ -87,7 +87,7 @@ FeaValue* LibsvmExtractor::JsonVal2FeaVal(
   FeaValue* fea_val = new FeaValue();
   if (json_val.is_array()) {
     std::vector<float> val = json_val.get< std::vector<float> >();
-    fea_val = new FeaValue(val);
+    fea_val = new FeaValue(val, 2);
   } else if (json_val.is_string()) {
     std::string val = json_val.get<std::string>();
     fea_val = new FeaValue(val, type);

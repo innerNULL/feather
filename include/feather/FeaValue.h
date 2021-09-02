@@ -19,14 +19,14 @@ class FeaValue {
   FeaValue(const float& val, const int16_t type=1);
   FeaValue(const double& val, const int16_t type=1);
   FeaValue(const std::string& val, const int16_t type=0);
-  FeaValue(const std::vector<int32_t>* val);
-  FeaValue(const std::vector<std::string>* val);
-  FeaValue(const std::vector<float>* val);
-  FeaValue(const std::vector<double>* val); 
-  FeaValue(const std::vector<int32_t>& val);
-  FeaValue(const std::vector<std::string>& val);
-  FeaValue(const std::vector<float>& val);
-  FeaValue(const std::vector<double>& val);
+  FeaValue(const std::vector<int32_t>* val, const int16_t type);
+  FeaValue(const std::vector<std::string>* val, const int16_t type);
+  FeaValue(const std::vector<float>* val, const int16_t type);
+  FeaValue(const std::vector<double>* val, const int16_t type); 
+  FeaValue(const std::vector<int32_t>& val, const int16_t type);
+  FeaValue(const std::vector<std::string>& val, const int16_t type);
+  FeaValue(const std::vector<float>& val, const int16_t type);
+  FeaValue(const std::vector<double>& val, const int16_t type);
 
   std::vector<int64_t> GetHash();
  
@@ -38,7 +38,9 @@ class FeaValue {
  private:
   int16_t type = -1;
   std::vector<float> vec_val;
-  std::string discrete_val;
+  /// Use `std::vector<std::string>` to support multi-hot mode.
+  // std::string discrete_val; 
+  std::vector<std::string> discrete_val;
   float continuous_val;
 };
 

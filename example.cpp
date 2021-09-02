@@ -26,21 +26,21 @@ void feavalue_example() {
   feather::FeaValue continuous_fea_val2(3.14);
   printf("Continuous FeaValue hash of '6' is %lld\n", continuous_fea_val0.GetHash()[0]);
 
-  feather::FeaValue vec_fea_val0({"1.1", "2.2", "3.3"});
+  feather::FeaValue vec_fea_val0({"1.1", "2.2", "3.3"}, 2);
   std::vector<int64_t> vec_fea_val0_hash = vec_fea_val0.GetHash();
   printf("Vector FeaValue hash of {'1.1', '2.2', '3.3'} is: ");
   for (auto x : vec_fea_val0_hash) { printf("%lld ", x); }
   printf("\n");
   /// feather::FeaValue vec_fea_val1({10, 9, 8}); // Ambitious error
   std::vector<int32_t> vec_fea_val1_raw = {10, 9, 8};
-  feather::FeaValue vec_fea_val1(vec_fea_val1_raw);
+  feather::FeaValue vec_fea_val1(vec_fea_val1_raw, 2);
   std::vector<int64_t> vec_fea_val1_hash = vec_fea_val1.GetHash();
   printf("Vector FeaValue hash of {10, 9, 8} is: ");
   for (auto x : vec_fea_val1_hash) { printf("%lld ", x); }
   printf("\n");
   /// feather::FeaValue vec_fea_val2({1.1, 2.2, 3.3}); // Ambitious error
   std::vector<float> vec_fea_val2_raw = {1.1f, 2.2f, 3.3f};
-  feather::FeaValue vec_fea_val2(vec_fea_val2_raw);
+  feather::FeaValue vec_fea_val2(vec_fea_val2_raw, 2);
   std::vector<int64_t> vec_fea_val2_hash = vec_fea_val2.GetHash();
   printf("Vector FeaValue hash of {1.1, 2.2, 3.3} is: ");
   for (auto x : vec_fea_val2_hash) { printf("%lld ", x); }

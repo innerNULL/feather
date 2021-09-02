@@ -135,8 +135,7 @@ TEST(TEST_FeaHash, SlotRegister) {
 
 
 TEST(TEST_FeaHash, FeaRegister) {
-  /// Test with demo fea-schema config
-  /// See `TEST(TEST_FeaHash, FeaHash)`
+  /// Test with demo fea-schema config: See `TEST(TEST_FeaHash, FeaHash)`
 
   /// Twice test
   feather::FeaHash feahash_;
@@ -146,6 +145,7 @@ TEST(TEST_FeaHash, FeaRegister) {
   feahash_.SlotRegister("test4", 104, 4, 2);
   int32_t hash_bucket_code_digits = std::string("1024").size();
 
+  /// Test single discrete feature
   std::vector<int64_t> test1_str1_feahash = feahash_.FeaRegister("test1", "1");
   std::vector<int64_t> test1_int1_feahash = feahash_.FeaRegister("test1", 1);
   int64_t test1_str1_hash = std::hash<std::string>()("1");
@@ -170,6 +170,22 @@ TEST(TEST_FeaHash, FeaRegister) {
   ASSERT_THAT(test2_int256_feahash[0], test2_str256_target_hash);
   ASSERT_THAT(test2_str256_feahash, test2_int256_feahash);
 
+  /// Test categorical multi-hot discrete feature
+  std::vector<std::string> test1_multi_hot_str = {"1", "2"};
+  std::vector<int32_t> test1_multi_hot_int = {1, 2};
+  std::vector<int64_t> test1_multi_hot_str_feahash = 
+      feahash_.FeaRegister("test1", test1_multi_hot_str);
+  std::vector<int64_t> test1_multi_hot_int_feahash = 
+      feahash_.FeaRegister("test1", test1_multi_hot_int);
+  ASSERT_THAT(test1_multi_hot_str_feahash.size(), test1_multi_hot_int.size());
+  ASSERT_THAT(test1_multi_hot_int_feahash.size(), test1_multi_hot_int.size());
+  for (int32_t i = 0; i < test1_multi_hot_str.size(); ++i) {
+    ASSERT_THAT(test1_multi_hot_str_feahash[i], test1_multi_hot_int_feahash[i]);
+    ASSERT_THAT(test1_multi_hot_str_feahash[i], 
+        feahash_.FeaRegister("test1", test1_multi_hot_str[i])[0]);
+  }
+
+  /// Test continuous feature
   std::vector<int64_t> test3_str3p14_feahash = feahash_.FeaRegister("test3", "3.14");
   //std::vector<int64_t> test3_float3p14_feahash = feahash_.FeaRegister("test3", 3.14);
   std::vector<int64_t> test3_float3p14_feahash = feahash_.FeaRegister(
@@ -180,6 +196,7 @@ TEST(TEST_FeaHash, FeaRegister) {
   ASSERT_THAT(test3_float3p14_feahash[0], test3_str3p14_target_hash);
   ASSERT_THAT(test3_str3p14_feahash, test3_float3p14_feahash);
 
+  /// Test float-vector(embedding) feature.
   std::vector<float> test4_val = {1.1, 2.2, 3.3, 4.4};
   std::vector<int64_t> test4_feahash = feahash_.FeaRegister("test4", test4_val);
   ASSERT_THAT(test4_feahash.size(), test4_val.size());

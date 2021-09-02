@@ -1,7 +1,9 @@
 /// file: FeaValue.cpp
 
 
+#include <sstream>
 #include <string>
+#include <iostream>
 #include <algorithm>
 #include <spdlog/spdlog.h>
 
@@ -14,7 +16,7 @@ namespace feather {
 FeaValue::FeaValue(const int32_t val, const int16_t type) {
   this->type = type;
   if (type == 0) {
-    this->discrete_val = std::to_string(val);
+    this->discrete_val = {std::to_string(val)};
   } else if (type == 1) {
     this->continuous_val = (float)val;
   } else {
@@ -27,7 +29,7 @@ FeaValue::FeaValue(const int32_t val, const int16_t type) {
 FeaValue::FeaValue(const float& val, const int16_t type) {
   this->type = type;
   if (type == 0) {
-    this->discrete_val = std::to_string(val);
+    this->discrete_val = {std::to_string(val)};
   } else if (type == 1) {
     this->continuous_val = val;
   } else {
@@ -45,7 +47,7 @@ FeaValue::FeaValue(const double& val, const int16_t type) {
 FeaValue::FeaValue(const std::string& val, const int16_t type) {
   this->type = type;
   if (type == 0) {
-    this->discrete_val = val;
+    this->discrete_val = {val};
   } else if (type == 1) {
     this->continuous_val = std::stof(val);
   } else {
@@ -55,67 +57,139 @@ FeaValue::FeaValue(const std::string& val, const int16_t type) {
 }
 
 
-FeaValue::FeaValue(const std::vector<int32_t>* val) {
-  this->type = 2;
-  this->vec_val.resize(val->size());
-  for (int32_t i = 0; i < val->size(); ++i) {
-    this->vec_val.at(i) = (float)(val->at(i));
+FeaValue::FeaValue(
+    const std::vector<int32_t>* val, const int16_t type) {
+  if (type == 1) {
+    spdlog::error("Vector can only happens on vector-feature \
+        or (multi-hot) discrete feature, which are type 0 and 3.");
+    throw "`type` parameter error";
+  }
+  this->type = type;
+  if (type == 0) {
+    std::ostringstream oss_;
+    this->discrete_val.resize(val->size());
+    for (int32_t i = 0; i < val->size(); ++i) {
+      oss_.str("");
+      oss_.clear();
+      oss_ << val->at(i);
+      this->discrete_val.at(i) = oss_.str();
+    }
+  } else if (type == 2) {
+    this->vec_val.resize(val->size());
+    for (int32_t i = 0; i < val->size(); ++i) {
+      this->vec_val.at(i) = (float)(val->at(i));
+    }
   }
 }
 
 
-FeaValue::FeaValue(const std::vector<int32_t>& val) {
-  new (this) FeaValue(&val);
+FeaValue::FeaValue(
+    const std::vector<int32_t>& val, const int16_t type) {
+  new (this) FeaValue(&val, type);
 }
 
 
-FeaValue::FeaValue(const std::vector<std::string>* val) {
-  this->type = 2;
-  this->vec_val.resize(val->size());
-  for (int32_t i = 0; i < val->size(); ++i) {
-    this->vec_val.at(i) = std::stof(val->at(i));
+FeaValue::FeaValue(
+    const std::vector<std::string>* val, const int16_t type) {
+  if (type == 1) {
+    spdlog::error("Vector can only happens on vector-feature \
+        or (multi-hot) discrete feature, which are type 0 and 3.");
+    throw "`type` parameter error";
+  }
+  this->type = type;
+  if (type == 0) {
+    this->discrete_val.resize(val->size());
+    for (int32_t i = 0; i < val->size(); ++i) {
+      this->discrete_val.at(i) = val->at(i);
+    }
+  } else if (type == 2) {
+    this->vec_val.resize(val->size());
+    for (int32_t i = 0; i < val->size(); ++i) {
+      this->vec_val.at(i) = std::stof(val->at(i));
+    }
   }
 }
 
 
-FeaValue::FeaValue(const std::vector<std::string>& val) {
-  new (this) FeaValue(&val);  
+FeaValue::FeaValue(
+    const std::vector<std::string>& val, const int16_t type) {
+  new (this) FeaValue(&val, type);  
 }
 
 
-FeaValue::FeaValue(const std::vector<float>* val) {
-  this->type = 2;
-  this->vec_val.resize(val->size());
-  for (int32_t i = 0; i < val->size(); ++i) {
-    this->vec_val.at(i) = val->at(i);
+FeaValue::FeaValue(
+    const std::vector<float>* val, const int16_t type) {
+  if (type == 1) {
+    spdlog::error("Vector can only happens on vector-feature \
+        or (multi-hot) discrete feature, which are type 0 and 3.");
+    throw "`type` parameter error";
+  }
+  this->type = type;
+  if (type == 0) {
+    std::ostringstream oss_;
+    this->discrete_val.resize(val->size());
+    for (int32_t i = 0; i < val->size(); ++i) {
+      oss_.str("");
+      oss_.clear();
+      oss_ << val->at(i);
+      this->discrete_val.at(i) = oss_.str();
+    }
+  } else if (type == 2) {
+    this->vec_val.resize(val->size());
+    for (int32_t i = 0; i < val->size(); ++i) {
+      this->vec_val.at(i) = val->at(i);
+    }
   }
 }
 
 
-FeaValue::FeaValue(const std::vector<float>& val) {
-  new (this) FeaValue(&val);
+FeaValue::FeaValue(
+    const std::vector<float>& val, const int16_t type) {
+  new (this) FeaValue(&val, type);
 }
 
 
-FeaValue::FeaValue(const std::vector<double>* val) {
-  this->type = 2;
-  this->vec_val.resize(val->size());
-  for (int32_t i = 0; i < val->size(); ++i) {
-    this->vec_val.at(i) = (float)(val->at(i));
+FeaValue::FeaValue(
+    const std::vector<double>* val, const int16_t type) {
+  if (type == 1) {
+    spdlog::error("Vector can only happens on vector-feature \
+        or (multi-hot) discrete feature, which are type 0 and 3.");
+    throw "`type` parameter error";
+  }
+  this->type = type;
+  if (type == 0) {
+    std::ostringstream oss_;
+    this->discrete_val.resize(val->size());
+    for (int32_t i = 0; i < val->size(); ++i) {
+      oss_.str("");
+      oss_.clear();
+      oss_ << val->at(i);
+      this->discrete_val.at(i) = oss_.str();
+    }
+  } else if (type == 2) {
+    this->vec_val.resize(val->size());
+    for (int32_t i = 0; i < val->size(); ++i) {
+      this->vec_val.at(i) = (float)val->at(i);
+    }
   }
 }
 
 
-FeaValue::FeaValue(const std::vector<double>& val) {
-  new (this) FeaValue(&val);
+FeaValue::FeaValue(
+    const std::vector<double>& val, const int16_t type) {
+  new (this) FeaValue(&val, type);
 }
 
 
 std::vector<int64_t> FeaValue::GetHash() {
   std::vector<int64_t> output;
   if (this->type == 0) {
-    output.emplace_back(
-        std::hash<std::string>()(this->discrete_val));
+    //output.emplace_back(
+    //    std::hash<std::string>()(this->discrete_val));
+    output.resize(this->discrete_val.size());
+    for (int32_t i = 0; i < this->discrete_val.size(); ++i) {
+      output[i] = std::hash<std::string>()(this->discrete_val[i]);  
+    }
   } else if (this->type == 1) {
     /// Since for continuous-feature, the feature-hash bucket-size 
     /// should always be 1, so return hash value as 1 can 
