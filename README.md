@@ -10,11 +10,15 @@ mkdir build && cd build
 cmake ../ -DBUILD_TESTS=ON # build with test 
 #or 
 cmake ../
+
+make -j12
 ```
 
 * **Python with pip**    
 ```bash
 cd feather && python3 -m pip install ./ -vvv
+# or
+python -m pip install https://github.com/innerNULL/feather/archive/refs/heads/main.zip -vvv
 ```
 here is what you may see:  
 ```
@@ -32,6 +36,8 @@ Successfully installed pyfeather-0.0.1
 * **Python with poetry**  
 ```bash
 cd feather && poetry run python -m pip install ./ -vvv
+# or
+poetry run python -m pip install https://github.com/innerNULL/feather/archive/refs/heads/main.zip -vvv
 ```
 
 
@@ -83,4 +89,4 @@ by the way, in case we want adjust each feature-slot's hash-bucket size, we can 
 ## TODO
 * Seperate classes' pybind codes, so when calling cpp interface, do not need linking/building pybind lib.
 * Makes `FeaHash::Hash2IndexDictBuild` more solid.
-* For discrete-feature, supports multi-hot encoding.
+* For discrete-feature, supports multi-hot encoding 

@@ -86,12 +86,34 @@ FeaValue* LibsvmExtractor::JsonVal2FeaVal(
     const int8_t type, const nlohmann::json& json_val) {
   FeaValue* fea_val = new FeaValue();
   if (json_val.is_array()) {
-    std::vector<float> val = json_val.get< std::vector<float> >();
-    fea_val = new FeaValue(val, 2);
+    if (json_val.size() == 0) {
+      spdlog::error("Vector value could not be a empty array.");
+      throw "`json_val` error";
+    }
+    if (json_val[0].is_string()) {
+      std::vector<std::string> val = json_val.get< std::vector<std::string> >();
+      fea_val = new FeaValue(val, type);
+    } else if (json_val[0].is_number_float()) {
+      std::vector<float> val = json_val.get< std::vector<float> >();
+      fea_val = new FeaValue(val, type);
+    } else if (json_val[0].is_number_integer()) {
+      std::vector<int32_t> val = json_val.get< std::vector<int32_t> >();
+      fea_val = new FeaValue(val, type);
+    } else {
+      std::vector<std::string> val = json_val.get< std::vector<std::string> >();
+      fea_val = new FeaValue(val, type);
+    }
   } else if (json_val.is_string()) {
     std::string val = json_val.get<std::string>();
     fea_val = new FeaValue(val, type);
+  } else if (json_val.is_number_integer()) {
+    int32_t val = json_val.get<int32_t>();
+    fea_val = new FeaValue(val, type);
+  } else if (json_val.is_number_float()) {
+    float val = json_val.get<float>();
+    fea_val = new FeaValue(val, type);
   } else if (json_val.is_number()) {
+    /* TODO@202109021800: Waiting to drop.
     if (json_val.get<float>() == (float)json_val.get<int>()) {
       int32_t val = json_val.get<int32_t>();
       fea_val = new FeaValue(val, type); 
@@ -99,6 +121,7 @@ FeaValue* LibsvmExtractor::JsonVal2FeaVal(
       float val = json_val.get<float>();
       fea_val = new FeaValue(val, type);
     }
+    */
   }
   return fea_val;
 }

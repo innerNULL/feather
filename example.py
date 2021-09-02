@@ -14,6 +14,8 @@ def main():
     print("fea1#val1", fea1val1_id)
     fea1val2_id = fea_hash.FeaRegister("fea1", "val2")
     print("fea1#val2", fea1val2_id)
+    fea1val1val2_id = fea_hash.FeaRegister("fea1", ["val1", "val2"])
+    print("fea1#val1_val2", fea1val1val2_id) 
 
     fea2val1_id = fea_hash.FeaRegister("fea2", "val1")
     print("fea2#val1", fea2val1_id)
