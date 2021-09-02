@@ -66,6 +66,8 @@ class FeaHash {
 
   int32_t GetFeaBucketCodeLength();
 
+  void SchemaLineRegister(const std::vector<std::string>& schema_line);
+
   //void Transfer();
 
  protected:
@@ -74,7 +76,8 @@ class FeaHash {
   /// for example, bucket id could be 35, bucket code could be '00035'.
   std::vector<std::string> FeaVal2FeaHashBucketCode(FeaValue* fea_val, FeaSlot* fea_slot);
 
-  void Hash2IndexDictBuild(const std::string& conf_path);
+  void Hash2IndexDictBuild();
+
  
  private:
   std::string conf_path;
@@ -91,7 +94,9 @@ class FeaHash {
   };
   */
   int32_t slot_num = 0;
-  int32_t val_hash_digits = 0;
+  int32_t slot_digits = -1;
+  int32_t val_hash_digits = -1;
+  int32_t fea_index = 1; /// // Feature hash index recorder. 
 
   std::unordered_map<std::string, FeaSlot> name2slot;
   std::unordered_map<int32_t, std::string> slot2name;

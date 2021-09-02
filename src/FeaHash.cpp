@@ -34,36 +34,56 @@ FeaHash::FeaHash(const std::string& conf_path, const bool reversible) {
 
   std::string line;
   std::ifstream conf_file(conf_path);
-  int32_t slot_digits = -1;
   while (std::getline(conf_file, line)) {
     std::vector<std::string> conf_line = absl::StrSplit(line, " ");
-    this->slot2name_dict_->Register({conf_line[0], conf_line[1]});
-
-    if (slot_digits != -1 && conf_line[1].size() != slot_digits) {
-      throw "Slot ID illegal, each slot-id string should has same length/digits.";
-    }
-    slot_digits = conf_line[1].size();
-    this->SlotRegister(conf_line[0], std::stoi(conf_line[1]), 
-        std::stoi(conf_line[2]), std::stoi(conf_line[3]));
+    this->SchemaLineRegister(conf_line);
   }
-  if (reversible) { this->Hash2IndexDictBuild(conf_path); }
+  //if (reversible) { this->Hash2IndexDictBuild(conf_path); }
+  if (reversible) { this->Hash2IndexDictBuild(); }
 }
 
 
-void FeaHash::Hash2IndexDictBuild(const std::string& conf_path) {
-  std::string line;
-  std::ifstream conf_file(conf_path);
-  int32_t count = 1; // index recorder.
-  while (std::getline(conf_file, line)) {
-    std::vector<std::string> conf_line = absl::StrSplit(line, " ");
-    int64_t slot_id = std::stoi(conf_line[1]);
-    int32_t bucket_num = std::stoi(conf_line[2]);
+void FeaHash::Hash2IndexDictBuild() {
+  std::map<int64_t, int32_t> slot_sorter;
+  for (auto iter = this->name2slot.begin(); 
+      iter != this->name2slot.end(); ++iter) {
+    const FeaSlot* slot = &(iter->second);
+    int64_t slot_id = slot->GetSlotID();
+    int32_t bucket_num = slot->GetBucketSize();
+    slot_sorter[slot_id] = bucket_num;
+  }
+  for (auto iter = slot_sorter.begin(); 
+      iter != slot_sorter.end(); iter++) {
+    int64_t slot_id = iter->first;
+    int32_t bucket_num = iter->second;
     for (int32_t i = 0; i < bucket_num; ++i) {
       int64_t fea_hash = slot_id * pow(10, this->val_hash_digits) + i;
       this->hash2index_dict_->Register(
-          {std::to_string(fea_hash), std::to_string(count++)});
+          {std::to_string(fea_hash), std::to_string(this->fea_index++)});
     }
   }
+}
+
+
+void FeaHash::SchemaLineRegister(
+    const std::vector<std::string>& schema_line) {
+  std::string fea_name = schema_line[0];
+  int64_t slot_id = std::stol(schema_line[1]);
+  int32_t bucket_num = std::stoi(schema_line[2]);
+  int8_t fea_type = std::stoi(schema_line[3]);
+  std::string slot_id_str = std::to_string(slot_id);
+  if (this->slot_digits != -1 
+      && (slot_id_str.size() != this->slot_digits 
+        || slot_id_str.size() != schema_line[1].size())
+  ) {
+    spdlog::error(
+        "Slot ID illegal, each slot-id should has same digits, \
+        or its hight digit could not be zero.");
+    throw "Slot ID illegal.";
+  }
+  this->slot2name_dict_->Register({fea_name, slot_id_str});
+  this->slot_digits = slot_id_str.size();
+  this->SlotRegister(fea_name, slot_id, bucket_num, fea_type);
 }
 
 

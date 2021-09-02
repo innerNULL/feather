@@ -90,3 +90,4 @@ by the way, in case we want adjust each feature-slot's hash-bucket size, we can 
 * Seperate classes' pybind codes, so when calling cpp interface, do not need linking/building pybind lib.
 * Makes `FeaHash::Hash2IndexDictBuild` more solid.
 * For discrete-feature, supports multi-hot encoding 
+* `FeaHash::Hash2IndexDictBuild` should supports rebuild mode.
