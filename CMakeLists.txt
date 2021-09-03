@@ -14,9 +14,11 @@ set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 
 option(BUILD_TESTS "Build tests" OFF)
 execute_process(COMMAND bash -c "which python3" OUTPUT_VARIABLE PYTHON3_ENV)
-string(REPLACE "\n" "" PYTHON3_ENV ${PYTHON3_ENV})
-set(PYTHON_EXECUTABLE ${PYTHON3_ENV})
-
+if(NOT "${PYTHON3_ENV}" STREQUAL "")
+    string(REPLACE "\n" "" PYTHON3_ENV ""${PYTHON3_ENV})
+endif()
+set(PYTHON_EXECUTABLE ${PYTHON3_ENV} CACHE STRING "PYTHON_EXECUTABLE")
+message(STATUS "PYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}")
 
 execute_process(COMMAND bash -c "pwd" OUTPUT_VARIABLE CURR_DIR)
 string(REPLACE "\n" "" CURR_DIR ${CURR_DIR}) 
@@ -26,8 +28,9 @@ message(STATUS "CURR_DIR: ${CURR_DIR}")
 if(EXISTS "${CURR_DIR}/main.zip")
     message(STATUS "cmakeup has been downloaded.")
 else()
+    message(STATUS "downloading cmakeup first.") 
     execute_process(
-        COMMAND wget https://ghproxy.com/https://github.com/innerNULL/cmakeup/archive/refs/heads/main.zip
+        COMMAND bash -c "wget https://ghproxy.com/https://github.com/innerNULL/cmakeup/archive/refs/heads/main.zip"
         WORKING_DIRECTORY ${CURR_DIR})
     execute_process(
         COMMAND unzip main.zip WORKING_DIRECTORY ${CURR_DIR})
@@ -54,6 +57,7 @@ cmakeup_integrate_gabime_spdlog("v1.x" "null" "global")
 
 cmakeup_pkg_cmake_importer("nlohmann" "json")
 cmakeup_integrate_nlohmann_json("master" "null" "global")
+
 
 message(STATUS "Default python environment is ${PYTHON3_ENV}")
 message(STATUS "Target python environment is ${PYTHON_EXECUTABLE}")

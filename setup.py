@@ -11,6 +11,23 @@ from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
 
 
+# Convert distutils Windows platform specifiers to CMake -A arguments
+PLAT_TO_CMAKE = {
+    "win32": "Win32",
+    "win-amd64": "x64",
+    "win-arm32": "ARM",
+    "win-arm64": "ARM64",
+}
+
+
+PYTHON3_PATH = os.popen("which python3").read().strip("\n")
+EXECUTABLE_PYTHON = sys.executable
+PYTHON_ENV = PYTHON3_PATH
+if (PYTHON_ENV == "" or "python" not in PYTHON_ENV):
+    PYTHON_ENV = EXECUTABLE_PYTHON
+print("PYTHON_ENV: %s" % PYTHON_ENV)
+
+
 class CMakeExtension(Extension):
     def __init__(self, name, sourcedir=""):
         Extension.__init__(self, name, sources=[])
@@ -39,6 +56,7 @@ class CMakeBuild(build_ext):
             "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={}".format(extdir),
             "-DPYTHON_EXECUTABLE={}".format(sys.executable),
             "-DCMAKE_BUILD_TYPE={}".format(cfg),  # not used on MSVC, but no harm
+            "-DPYTHON_EXECUTABLE={}".format(PYTHON_ENV),
         ]
         build_args = []
         # Adding CMake arguments set as environment variable
@@ -105,6 +123,7 @@ class CMakeBuild(build_ext):
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
 
+        print("CMake Arguments: ", cmake_args)
         subprocess.check_call(
             ["cmake", ext.sourcedir] + cmake_args, cwd=self.build_temp
         )

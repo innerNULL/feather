@@ -1,0 +1,65 @@
+# This workflow will upload a Python Package using Twine when a release is created
+# For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Upload Python Package
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  deploy:
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.7]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }} 
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+        #python-version: ${{ matrix.python-version }}
+    - name: Config 
+      run: |
+        sudo apt-get update
+        sudo apt-get install zip unzip wget python-is-python3
+        which python
+        which python3
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install build twine flake8
+    - name: Lint with flake8 for syntax errors
+      run: |
+        pip install flake8
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        pwd
+        ls -lh
+    - name: Build manylinux Python wheels
+      #uses: RalfG/python-wheels-manylinux-build@v0.3.4-manylinux2010_x86_64
+      uses: RalfG/python-wheels-manylinux-build@v0.3.4-manylinux2014_x86_64
+      with:
+        python-versions: 'cp37-cp37m cp38-cp38m cp39-cp39m'
+        build-requirements: 'cython'
+        package-path: './'
+        system-packages: 'zip unzip wget git glibc'
+        pip-wheel-args: '-w ./dist --no-deps -vvv'
+    - name: Build package
+      #run: python -m build
+      run: ls -lh
+    - name: Publish wheels to PyPI
+      env:
+        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+      run: |
+        twine upload dist/*-manylinux*.whl
