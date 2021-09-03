@@ -135,13 +135,15 @@ class CMakeBuild(build_ext):
 
 setup(
     name="pyfeather",
-    version="0.0.1",
+    version="0.0.2",
     author="innerNULL",
     author_email="",
     description="A project makes feature-hash easier.",
-    long_description="",
+    long_description="A feature-hash lib based on cpp at low level.",
+    python_requires='>=3.7, <3.10',
     ext_modules=[CMakeExtension("pyfeather")],
     cmdclass={"build_ext": CMakeBuild},
     zip_safe=False,
+    url="https://github.com/innerNULL/feather", 
     extras_require={"test": ["pytest"]},
 )
