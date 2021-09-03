@@ -13,6 +13,8 @@ set(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb")
 set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 
 option(BUILD_TESTS "Build tests" OFF)
+option(BUILD_EXAMPLES "Build examples" ON)
+
 execute_process(COMMAND bash -c "which python3" OUTPUT_VARIABLE PYTHON3_ENV)
 if(NOT "${PYTHON3_ENV}" STREQUAL "")
     string(REPLACE "\n" "" PYTHON3_ENV ""${PYTHON3_ENV})
@@ -70,11 +72,13 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src LIB_SOURCE)
 add_library(feather STATIC ${LIB_SOURCE})
 
-
-add_executable(example "./example.cpp")
-target_link_libraries(example PRIVATE feather)
-target_link_libraries(example PRIVATE pybind11::module pybind11::lto pybind11::windows_extras pybind11::embed)
-target_link_libraries(example PRIVATE absl::strings)
+if (BUILD_EXAMPLES)
+    add_executable(example "./example.cpp")
+    target_link_libraries(example PRIVATE feather)
+    #target_link_libraries(example PRIVATE pybind11::module pybind11::lto pybind11::windows_extras pybind11::embed)
+    target_link_libraries(example PRIVATE pybind11::embed)
+    target_link_libraries(example PRIVATE absl::strings)
+endif()
 
 pybind11_add_module(pyfeather ${LIB_SOURCE})
 target_link_libraries(pyfeather PRIVATE absl::strings)
