@@ -68,6 +68,8 @@ class FeaHash {
 
   void SchemaLineRegister(const std::vector<std::string>& schema_line);
 
+  void Hash2IndexDictBuild();
+
   //void Transfer();
 
  protected:
@@ -75,9 +77,6 @@ class FeaHash {
 
   /// for example, bucket id could be 35, bucket code could be '00035'.
   std::vector<std::string> FeaVal2FeaHashBucketCode(FeaValue* fea_val, FeaSlot* fea_slot);
-
-  void Hash2IndexDictBuild();
-
  
  private:
   std::string conf_path;
