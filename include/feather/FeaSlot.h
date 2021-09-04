@@ -9,11 +9,8 @@
 #include <unordered_map>
 #include <memory>
 #include <vector>
-#include <pybind11/pybind11.h>
 
 #include "./FeaValue.h"
-
-namespace py = pybind11;
 
 
 namespace feather {
@@ -65,9 +62,6 @@ class FeaSlot {
   //std::unordered_map<std::string, int64_t> val2fea_id;
   //std::unordered_map<int64_t, std::string> fea_id2vals;
 };
-
-
-void FeaSlot_pybind(py::module &m);
 
 
 } // namespace feather

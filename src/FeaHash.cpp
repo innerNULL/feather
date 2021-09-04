@@ -10,14 +10,10 @@
 #include <absl/strings/str_split.h>
 #include <spdlog/spdlog.h>
 #include <nlohmann/json.hpp>
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
 
 #include "feather/BiDict.h"
 #include "feather/utils.h"
 #include "feather/FeaHash.h"
-
-namespace py = pybind11;
 
 
 namespace feather {
@@ -30,7 +26,6 @@ FeaHash::FeaHash() {
 
 FeaHash::FeaHash(const std::string& conf_path, const bool reversible) {
   spdlog::info("Initializing `FeaHash` with config '{0}'...", conf_path);
-  //this->fea_hash["meta"]["conf_path"] = conf_path;
 
   std::string line;
   std::ifstream conf_file(conf_path);
@@ -57,7 +52,7 @@ void FeaHash::Hash2IndexDictBuild() {
     int64_t slot_id = iter->first;
     int32_t bucket_num = iter->second;
     for (int32_t i = 0; i < bucket_num; ++i) {
-      int64_t fea_hash = slot_id * pow(10, this->val_hash_digits) + i;
+      int64_t fea_hash = slot_id * pow(10, this->bucket_code_digits_) + i;
       this->hash2index_dict_->Register(
           {std::to_string(fea_hash), std::to_string(this->fea_index++)});
     }
@@ -108,13 +103,10 @@ int32_t FeaHash::SlotRegister(const std::string& fea_name,
   if (this->name2slot.find(fea_name) == this->name2slot.end()) {
     this->name2slot.emplace(
         fea_name, FeaSlot(fea_name, slot_id, bucket_size, slot_type));
-    this->slot2name[slot_id] = fea_name;
   }
   this->slot_num += 1;
-  //this->max_slot = std::max(this->max_slot, slot_id);
-  //this->min_slot = std::min(this->max_slot, slot_id);
-  this->val_hash_digits = std::max(
-      (int32_t)std::to_string(bucket_size).size(), this->val_hash_digits);
+  this->bucket_code_digits_ = std::max(
+      (int32_t)std::to_string(bucket_size).size(), this->bucket_code_digits_);
   spdlog::info(
       "Registered type {0} feature '{1}' to slot {2} with {3} as bucket-size.", 
       slot_type, fea_name, slot_id, bucket_size);
@@ -259,7 +251,7 @@ std::vector<int64_t> FeaHash::Fea2FeaHash(
 std::string FeaHash::FeaHash2FeaName(const int64_t fea_hash) {
   std::string fea_hash_str = std::to_string(fea_hash);
   std::string slot = fea_hash_str.substr(
-      0, fea_hash_str.size() - this->val_hash_digits);
+      0, fea_hash_str.size() - this->bucket_code_digits_);
   return this->slot2name_dict_->Map("slot", "fea_name", slot)[0];
 }
 
@@ -277,7 +269,7 @@ const nlohmann::json& FeaHash::GetMeta() {
 
 
 int32_t FeaHash::GetFeaBucketCodeLength() {
-  return this->val_hash_digits;
+  return this->bucket_code_digits_;
 }
 
 
@@ -314,7 +306,7 @@ std::vector<std::string> FeaHash::FeaVal2FeaHashBucketCode(
   fea_bucket_code.resize(hash_bucket_id.size());
   for (int32_t i = 0; i < hash_bucket_id.size(); ++i) {
     fea_bucket_code[i] = num2str_code<int32_t>(
-        hash_bucket_id[i], this->val_hash_digits);
+        hash_bucket_id[i], this->bucket_code_digits_);
   }
   return fea_bucket_code;
 }
@@ -332,33 +324,6 @@ std::vector<int64_t> FeaHash::FeaVal2FeaHash(
         std::to_string(slot_id) + fea_bucket_code[i]);
   }
   return fea_val_hash;
-}
-
-
-void FeaHash_pybind(py::module& m) {
-  py::class_<FeaHash>(m, "FeaHash")
-      .def(py::init<>())
-      .def(py::init<const std::string&>())
-      .def("SlotRegister", &FeaHash::SlotRegister)
-      .def("FeaHash2FeaName", &FeaHash::FeaHash2FeaName)
-      .def("FeaRegister", 
-          static_cast<std::vector<int64_t> (FeaHash::*)(
-            const std::string&, const std::string&)>(&FeaHash::FeaRegister))
-      .def("FeaRegister", 
-          static_cast<std::vector<int64_t> (FeaHash::*)(
-            const std::string&, const int32_t)>(&FeaHash::FeaRegister))
-      .def("FeaRegister", 
-          static_cast<std::vector<int64_t> (FeaHash::*)(
-            const std::string&, const float)>(&FeaHash::FeaRegister))
-      .def("FeaRegister", 
-          static_cast<std::vector<int64_t> (FeaHash::*)(
-            const std::string&, const std::vector<float>&)>(&FeaHash::FeaRegister))
-      .def("FeaRegister",
-          static_cast<std::vector<int64_t> (FeaHash::*)(
-            const std::string&, const std::vector<std::string>&)>(&FeaHash::FeaRegister))
-      .def("FeaRegister",
-          static_cast<std::vector<int64_t> (FeaHash::*)( 
-            const std::string&, const std::vector<int32_t>&)>(&FeaHash::FeaRegister));
 }
 
 

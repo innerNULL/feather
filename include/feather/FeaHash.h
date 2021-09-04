@@ -10,13 +10,10 @@
 #include <string>
 #include <vector>
 #include <nlohmann/json.hpp>
-#include <pybind11/pybind11.h>
 
 #include "feather/BiDict.h"
 #include "feather/FeaSlot.h"
 #include "feather/FeaValue.h"
-
-namespace py = pybind11;
 
 
 namespace feather {
@@ -86,26 +83,13 @@ class FeaHash {
   std::vector<std::string> hash2index_schema_ = {"fea_hash", "fea_index"};
   std::shared_ptr<BiDict> hash2index_dict_ = 
       std::make_shared<BiDict>(this->hash2index_schema_);
-  /*
-  nlohmann::json fea_hash = {
-      { "meta", {} }, 
-      { "slots", {} }
-  };
-  */
+  std::unordered_map<std::string, FeaSlot> name2slot;
+
   int32_t slot_num = 0;
   int32_t slot_digits = -1;
-  int32_t val_hash_digits = -1;
+  int32_t bucket_code_digits_ = -1; /// Feature value's hash-bucket code length.
   int32_t fea_index = 1; /// // Feature hash index recorder. 
-
-  std::unordered_map<std::string, FeaSlot> name2slot;
-  std::unordered_map<int32_t, std::string> slot2name;
-  std::unordered_map<std::string, int64_t> fea_val2fea_id;
-  std::unordered_map<int64_t, std::string> fea_id2fea_group;
-  std::unordered_map< int64_t, std::vector<std::string> > fea_id2fea_vals;
 };
-
-
-void FeaHash_pybind(py::module& m);
 
 
 } // namespace feather

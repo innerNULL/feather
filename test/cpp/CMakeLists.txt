@@ -12,7 +12,7 @@ enable_testing()
 add_executable(feather_tests test.cpp)
 target_link_libraries(feather_tests PRIVATE feather)
 #target_link_libraries(feather_tests PRIVATE pybind11::module pybind11::lto pybind11::windows_extras pybind11::embed)
-target_link_libraries(feather_tests PRIVATE pybind11::embed)
+#target_link_libraries(feather_tests PRIVATE pybind11::embed)
 target_link_libraries(feather_tests PRIVATE absl::strings)
 #target_link_libraries(feather_tests PRIVATE ${googletest})
 target_link_libraries(feather_tests 

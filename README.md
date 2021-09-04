@@ -87,6 +87,4 @@ Each feature has a slot and hash-bucket size, the finally hash of this feature i
 by the way, in case we want adjust each feature-slot's hash-bucket size, we can maintain a hash-ring/consistant hash for each slot.
 
 ## TODO
-* Seperate classes' pybind codes, so when calling cpp interface, do not need linking/building pybind lib.
-* For discrete-feature, supports multi-hot encoding 
 * `FeaHash::Hash2IndexDictBuild` should supports rebuild mode.

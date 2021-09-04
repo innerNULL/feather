@@ -7,13 +7,10 @@
 
 #include <string>
 #include <unordered_map>
-#include <pybind11/pybind11.h>
 #include <nlohmann/json.hpp>
 
 #include "feather/FeaExtractor.h"
 #include "feather/FeaHash.h"
-
-namespace py = pybind11;
 
 
 namespace feather {
@@ -43,9 +40,6 @@ class LibsvmExtractor : public FeaExtractor {
   std::unordered_map<int64_t, int64_t> hash_id2libsvm_id;
   std::unordered_map<int64_t, int64_t> libsvm_id2hash_id;
 };
-
-
-void LibsvmExtractor_pybind(py::module &m); 
 
 
 } // namespace feather

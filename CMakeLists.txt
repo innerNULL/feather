@@ -70,17 +70,18 @@ include_directories(${pybind11_INCLUDE_DIRS})
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src LIB_SOURCE)
+aux_source_directory(${PROJECT_SOURCE_DIR}/src/pybind PYBINDER)
 add_library(feather STATIC ${LIB_SOURCE})
 
 if (BUILD_EXAMPLES)
     add_executable(example "./example.cpp")
     target_link_libraries(example PRIVATE feather)
     #target_link_libraries(example PRIVATE pybind11::module pybind11::lto pybind11::windows_extras pybind11::embed)
-    target_link_libraries(example PRIVATE pybind11::embed)
+    #target_link_libraries(example PRIVATE pybind11::embed)
     target_link_libraries(example PRIVATE absl::strings)
 endif()
 
-pybind11_add_module(pyfeather ${LIB_SOURCE})
+pybind11_add_module(pyfeather ${LIB_SOURCE} ${PYBINDER})
 target_link_libraries(pyfeather PRIVATE absl::strings)
 
 if (BUILD_TESTS)
