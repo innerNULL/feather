@@ -300,7 +300,7 @@ std::vector<int32_t> FeaHash::FeaVal2FeaHashBucket(
     /// TODO@202108271400: Too much memory for id style feature.
     // hash_bucket_id[i] = fea_slot->ValRegister(
     //     fea_val->GetDescreteValue(), fea_hash[i]); 
-    hash_bucket_id[i] = abs(fea_hash[i]) % fea_slot->GetBucketSize(); 
+    hash_bucket_id[i] = llabs(fea_hash[i]) % fea_slot->GetBucketSize();
   }
   return hash_bucket_id;
 }
