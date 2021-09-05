@@ -39,4 +39,4 @@ jobs:
     - name: Test with pytest
       run: |
         #pytest
-        python3 -c "import pyfeather; print(pyfeather)"
+        python ./test/python/run_test.py 
