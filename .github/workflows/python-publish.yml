@@ -46,4 +46,9 @@ jobs:
         TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
         TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
       run: |
-        twine upload dist/*-manylinux*.whl
+        twine upload dist/*-manylinux*.whl --verbose
+    - name: Test published wheels on PyPI
+      run: |
+        sleep 5m 
+        python -m pip install pyfeather
+        python ./test/python/run_test.py 
