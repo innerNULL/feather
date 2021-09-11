@@ -19,6 +19,8 @@ make -j12
 cd feather && python3 -m pip install ./ -vvv
 # or
 python -m pip install https://github.com/innerNULL/feather/archive/refs/heads/main.zip -vvv
+# or
+python -m pip install pyfeather
 ```
 here is what you may see:  
 ```
@@ -38,6 +40,45 @@ Successfully installed pyfeather-0.0.1
 cd feather && poetry run python -m pip install ./ -vvv
 # or
 poetry run python -m pip install https://github.com/innerNULL/feather/archive/refs/heads/main.zip -vvv
+```
+
+## How to Use
+### Feature-Hash
+Here is an simple example:
+```python
+import pyfeather
+from typing import List
+
+# Loading the pre-defined feature schema.
+feahash = pyfeather.FeaHash("./conf/feather.conf")
+
+# Getting hash of value 2 and '2' of 'fea1', which is an discrete 
+# feature, and both hash results should be same.
+fea1_hash_str2: List[int] = feahash.FeaRegister("fea1", "2")
+fea1_hash_int2: List[int] = feahash.FeaRegister("fea1", 2)
+# [10100070] [10100070]
+print(fea1_hash_str2, fea1_hash_int2)
+
+# Getting hash of value 3.14 and '3.14' and 5.12 of "fea10", which 
+# is an continuous feature, and the hash-bucket of any value of 
+# this feature should always be 0, so all value has same feature 
+# hash result.
+fea10_hash_float3p14: List[int] = feahash.FeaRegister("fea10", 3.14)
+fea10_hash_str3p14: List[int] = feahash.FeaRegister("fea10", '3.14')
+fea10_hash_float5p12: List[int] = feahash.FeaRegister("fea10", 5.12)
+# [11000000] [11000000] [11000000] 
+print(fea10_hash_float3p14, fea10_hash_str3p14, fea10_hash_float5p12)
+
+# Getting hash of value of [4.0, 3.0, 2.0, 1.0] and [1.0, 2.0, 3.0, 4.0] 
+# of "fea11", which is an vector feature with dimension as 4, so all 
+# 4-dim vectors' feature-hash-bucket of this feature should always 
+# be [0, 1, 2, 3], and like continusous-feature, all feature-hash of 
+# any value of this feature should be same.
+fea11_hash_4to1: List[int] = feahash.FeaRegister("fea11", [4.0, 3.0, 2.0, 1.0])
+fea11_hash_1to4: List[int] = feahash.FeaRegister("fea11", [1.0, 2.0, 3.0, 4.0])
+# [11100000, 11100001, 11100002, 11100003]
+# [11100000, 11100001, 11100002, 11100003]
+print(fea11_hash_4to1, fea11_hash_1to4)
 ```
 
 
@@ -82,7 +123,7 @@ Briefly, **Bucket-ID** is `int32_t`, **Bucket-Code** is `std::string` which digi
     * bucket-id: 568 -> bucket-code: '00568'   
 
 ### Algorithm
-Each feature has a slot and hash-bucket size, the finally hash of this feature is a `int64` in the format as ${SLOT}{HASH-BUCKET-CODE}, since the top digit of this int64 is controled by slot, so each feature's finally hash value will far away with each other, the second part is '**part of** hash value of feature value according feature hash-bucket size' because, hash value of feature value is a int64, finally-hash is also a int64, if we just concat slot and hash value of feature value, then the finally result number will have posibillity to overflow from int64 range.
+Each feature has a slot and hash-bucket size, the finally hash of this feature is a `int64` in the format as `${SLOT}${HASH-BUCKET-CODE}`, since the top digit of this int64 is controled by slot, so each feature's finally hash value will far away with each other, the second part is '**part of** hash value of feature value according feature hash-bucket size' because, hash value of feature value is a int64, finally-hash is also a int64, if we just concat slot and hash value of feature value, then the finally result number will have posibillity to overflow from int64 range.
 
 by the way, in case we want adjust each feature-slot's hash-bucket size, we can maintain a hash-ring/consistant hash for each slot.
 
