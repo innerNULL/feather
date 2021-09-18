@@ -10,6 +10,7 @@
 #include "./cases/FeaValue_test.h"
 #include "./cases/FeaSlot_test.h"
 #include "./cases/FeaHash_test.h"
+#include "./cases/LibsvmExtractor_test.h"
 
 
 int main(int argc, char** argv) {

@@ -48,12 +48,12 @@ def main():
     print("record1: \n", record1)
     print("record2: \n", record2)
     target = \
-        "1.000000 10100025:1 11000000:3.140000 11100000:2.300000 11100001:1.400000 11100002:3.500000 11100003:6.800000 10200026:1 10805285:1"
+        "1 10100025:1 11000000:3.140000 11100000:2.300000 11100001:1.400000 11100002:3.500000 11100003:6.800000 10200026:1 10805285:1"
     target = target.split(" ")
     target = [target[0]] + sorted(target[1:], key=lambda x: x.split(":")[0])
     target = " ".join(target)
-    output1 = libsvm_extractor.Extract(record1)
-    output2 = libsvm_extractor.Extract(record2)  
+    output1 = libsvm_extractor.Extract(record1, True)
+    output2 = libsvm_extractor.Extract(record2, True)  
     print("target:\n" + target)
     print("output1:\n" + output1)
     print("output2:\n" + output2)
@@ -73,7 +73,7 @@ def main():
 
 
     libsvm_extractor = pyfeather.LibsvmExtractor("../conf/feather.conf", "ctr", True)
-    output1_idx = libsvm_extractor.Extract(record1) 
+    output1_idx = libsvm_extractor.Extract(record1, True) 
     print("output1_idx:\n" + output1_idx)
 
 if __name__ == "__main__":

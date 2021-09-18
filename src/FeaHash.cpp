@@ -82,7 +82,7 @@ void FeaHash::SchemaLineRegister(
 }
 
 
-std::string FeaHash::FeaHash2FeaIndex(const int64_t fea_hash) {
+std::string FeaHash::FeaHash2FeaIndexStr(const int64_t fea_hash) {
   return this->hash2index_dict_->Map(
       "fea_hash", "fea_index", std::to_string(fea_hash))[0];
 }

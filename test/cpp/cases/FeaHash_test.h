@@ -230,7 +230,7 @@ TEST(TEST_FeaHash, SchemaLineRegister) {
 }
 
 
-TEST(TEST_FeaHash, FeaHash2FeaIndex) {
+TEST(TEST_FeaHash, FeaHash2FeaIndexStr) {
   feather::FeaHash feahash_;
   std::vector<std::string> test1_schema = {"test1", "100", "5", "0"};
   std::vector<std::string> test2_schema = {"test2", "101", "128", "2"};
@@ -244,16 +244,16 @@ TEST(TEST_FeaHash, FeaHash2FeaIndex) {
 
   ASSERT_THAT(feahash_.GetFeaBucketCodeLength(), 4);
   
-  ASSERT_THAT(feahash_.FeaHash2FeaIndex(1000000), "1");
-  ASSERT_THAT(feahash_.FeaHash2FeaIndex(1000004), "5");
-  ASSERT_THAT(feahash_.FeaHash2FeaIndex(1010000), std::to_string(5 + 1));
-  ASSERT_THAT(feahash_.FeaHash2FeaIndex(1010031), std::to_string(5 + 32));  
-  ASSERT_THAT(feahash_.FeaHash2FeaIndex(1010127), std::to_string(5 + 128));
-  ASSERT_THAT(feahash_.FeaHash2FeaIndex(1020000), std::to_string(5 + 128 + 1));
-  ASSERT_THAT(feahash_.FeaHash2FeaIndex(1030000), std::to_string(5 + 128 + 1 + 1));
-  ASSERT_THAT(feahash_.FeaHash2FeaIndex(1030001), std::to_string(5 + 128 + 1 + 2));
-  ASSERT_THAT(feahash_.FeaHash2FeaIndex(1030511), std::to_string(5 + 128 + 1 + 512));
-  ASSERT_THAT(feahash_.FeaHash2FeaIndex(1031023), std::to_string(5 + 128 + 1 + 1024));
+  ASSERT_THAT(feahash_.FeaHash2FeaIndexStr(1000000), "1");
+  ASSERT_THAT(feahash_.FeaHash2FeaIndexStr(1000004), "5");
+  ASSERT_THAT(feahash_.FeaHash2FeaIndexStr(1010000), std::to_string(5 + 1));
+  ASSERT_THAT(feahash_.FeaHash2FeaIndexStr(1010031), std::to_string(5 + 32));  
+  ASSERT_THAT(feahash_.FeaHash2FeaIndexStr(1010127), std::to_string(5 + 128));
+  ASSERT_THAT(feahash_.FeaHash2FeaIndexStr(1020000), std::to_string(5 + 128 + 1));
+  ASSERT_THAT(feahash_.FeaHash2FeaIndexStr(1030000), std::to_string(5 + 128 + 1 + 1));
+  ASSERT_THAT(feahash_.FeaHash2FeaIndexStr(1030001), std::to_string(5 + 128 + 1 + 2));
+  ASSERT_THAT(feahash_.FeaHash2FeaIndexStr(1030511), std::to_string(5 + 128 + 1 + 512));
+  ASSERT_THAT(feahash_.FeaHash2FeaIndexStr(1031023), std::to_string(5 + 128 + 1 + 1024));
 }
 
 

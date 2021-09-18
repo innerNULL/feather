@@ -27,10 +27,12 @@ LibsvmExtractor::LibsvmExtractor(const std::string& feahash_conf,
 }
 
 
-std::string LibsvmExtractor::Extract(const nlohmann::json& flat_json) {
+std::string LibsvmExtractor::Extract(
+    const nlohmann::json& flat_json, const bool with_label) {
   std::string output;
   const std::unordered_map<std::string, FeaSlot>* slots_ = 
       this->fea_hash.GetSlots();
+  /// Using ordered map, default ranking by index/hash
   std::map<int64_t, std::string> libsvm_kv;
  
   for (auto it = slots_->begin(); it != slots_->end(); ++it) {
@@ -47,7 +49,7 @@ std::string LibsvmExtractor::Extract(const nlohmann::json& flat_json) {
     for (int32_t i = 0; i < hash_id.size(); ++i) {
       int64_t id;
       if (this->index) {
-        id = std::stol(this->fea_hash.FeaHash2FeaIndex(hash_id[i]));
+        id = std::stol(this->fea_hash.FeaHash2FeaIndexStr(hash_id[i]));
       } else { 
         id = hash_id[i];
       }
@@ -63,7 +65,18 @@ std::string LibsvmExtractor::Extract(const nlohmann::json& flat_json) {
   for (auto it = libsvm_kv.begin(); it != libsvm_kv.end(); ++it) {
     output = output + std::to_string(it->first) + ":" + it->second + " ";
   }
-  return this->ExtractLabel(flat_json) + " " + output;
+  if (with_label) {
+    return this->ExtractLabel(flat_json) + " " + output;
+  } else {
+    return output;
+  }
+}
+
+
+std::string LibsvmExtractor::Extract(
+    const std::string& flat_json, const bool with_label) {
+  nlohmann::json flat_json_obj = nlohmann::json::parse(flat_json);
+  return this->Extract(flat_json_obj, with_label);
 }
 
 
@@ -74,8 +87,12 @@ std::string LibsvmExtractor::ExtractLabel(
     label_str = "error";
     if (flat_json[this->label].is_string()) {
       label_str = flat_json[this->label]; 
-    } else if (flat_json[this->label].is_number()) {
-      label_str = std::to_string((float)flat_json[this->label]);
+    } else if (flat_json[this->label].is_number_integer()) {
+      label_str = std::to_string(
+          flat_json[this->label].get<int32_t>());
+    } else if (flat_json[this->label].is_number_float()) {
+      label_str = std::to_string(
+          flat_json[this->label].get<float>());
     }
   }
   return label_str;
@@ -124,12 +141,6 @@ FeaValue* LibsvmExtractor::JsonVal2FeaVal(
     */
   }
   return fea_val;
-}
-
-
-std::string LibsvmExtractor::Extract(const std::string& flat_json) {
-  nlohmann::json flat_json_obj = nlohmann::json::parse(flat_json);
-  return this->Extract(flat_json_obj);
 }
 
 

@@ -24,8 +24,8 @@ class LibsvmExtractor : public FeaExtractor {
 
   int32_t CheckField(const nlohmann::json& flat_json, const std::string& field);
 
-  std::string Extract(const std::string& flat_json);
-  std::string Extract(const nlohmann::json& flat_json);
+  std::string Extract(const std::string& flat_json, const bool with_label=true);
+  std::string Extract(const nlohmann::json& flat_json, const bool with_label=true);
 
   std::string ExtractLabel(const nlohmann::json& flat_json);
 

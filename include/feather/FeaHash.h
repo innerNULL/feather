@@ -47,7 +47,7 @@ class FeaHash {
 
   std::string FeaHash2FeaName(const int64_t fea_hash);
 
-  std::string FeaHash2FeaIndex(const int64_t fea_hash);
+  std::string FeaHash2FeaIndexStr(const int64_t fea_hash);
 
   //const nlohmann::json& GetMeta();
 
