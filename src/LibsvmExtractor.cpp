@@ -4,6 +4,7 @@
 #include <iostream>
 #include <map>
 #include <algorithm>
+#include <thread>
 #include <spdlog/spdlog.h>
 
 #include "feather/utils.h"
@@ -78,6 +79,35 @@ std::string LibsvmExtractor::Extract(
   nlohmann::json flat_json_obj = nlohmann::json::parse(flat_json);
   return this->Extract(flat_json_obj, with_label);
 }
+
+
+std::vector<std::string> LibsvmExtractor::BatchExtract(
+    const std::vector<nlohmann::json>& flat_json, const bool with_label) {
+  std::vector<std::string> output;
+  std::vector<std::thread> threads_;
+  output.resize(flat_json.size());
+  threads_.resize(flat_json.size());
+  for (int32_t i = 0; i < flat_json.size(); ++i) {
+    std::thread curr_threads_([this, &output, &flat_json, with_label, i] {
+        output[i] = this->Extract(flat_json[i], with_label); 
+    });
+    threads_[i] = std::move(curr_threads_);
+  }
+  for (auto& thread_ : threads_) { thread_.join(); }
+  return output;
+}
+
+
+std::vector<std::string> LibsvmExtractor::BatchExtract(
+    const std::vector<std::string>& json_str, const bool with_label) {
+  std::vector<nlohmann::json> json_list;
+  json_list.resize(json_str.size());
+  for (int32_t i = 0; i < json_str.size(); ++i) {
+    json_list[i] = nlohmann::json::parse(json_str[i]);
+  }
+  return this->BatchExtract(json_list, with_label);
+}
+
 
 
 std::string LibsvmExtractor::ExtractLabel(

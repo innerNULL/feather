@@ -21,24 +21,24 @@ void FeaHash_pybind(py::module& m) {
       .def("FeaHash2FeaName", &FeaHash::FeaHash2FeaName)
       .def("SchemaLineRegister", &FeaHash::SchemaLineRegister)
       .def("Hash2IndexDictBuild", &FeaHash::Hash2IndexDictBuild)
-      .def("FeaRegister", 
+      .def("GetFeaHash", 
           static_cast<std::vector<int64_t> (FeaHash::*)(
-            const std::string&, const std::string&)>(&FeaHash::FeaRegister))
-      .def("FeaRegister", 
+            const std::string&, const std::string&)>(&FeaHash::GetFeaHash))
+      .def("GetFeaHash", 
           static_cast<std::vector<int64_t> (FeaHash::*)(
-            const std::string&, const int32_t)>(&FeaHash::FeaRegister))
-      .def("FeaRegister", 
+            const std::string&, const int32_t)>(&FeaHash::GetFeaHash))
+      .def("GetFeaHash", 
           static_cast<std::vector<int64_t> (FeaHash::*)(
-            const std::string&, const float)>(&FeaHash::FeaRegister))
-      .def("FeaRegister", 
+            const std::string&, const float)>(&FeaHash::GetFeaHash))
+      .def("GetFeaHash", 
           static_cast<std::vector<int64_t> (FeaHash::*)(
-            const std::string&, const std::vector<float>&)>(&FeaHash::FeaRegister))
-      .def("FeaRegister",
+            const std::string&, const std::vector<float>&)>(&FeaHash::GetFeaHash))
+      .def("GetFeaHash",
           static_cast<std::vector<int64_t> (FeaHash::*)(
-            const std::string&, const std::vector<std::string>&)>(&FeaHash::FeaRegister))
-      .def("FeaRegister",
+            const std::string&, const std::vector<std::string>&)>(&FeaHash::GetFeaHash))
+      .def("GetFeaHash",
           static_cast<std::vector<int64_t> (FeaHash::*)( 
-            const std::string&, const std::vector<int32_t>&)>(&FeaHash::FeaRegister));
+            const std::string&, const std::vector<int32_t>&)>(&FeaHash::GetFeaHash));
 }
 
 

@@ -137,7 +137,7 @@ int16_t FeaHash::FeaValCheck(
 }
 
 
-std::vector<int64_t> FeaHash::FeaRegister(
+std::vector<int64_t> FeaHash::GetFeaHash(
     const std::string& fea_name, const std::string& fea_value) {
   /** TODO@202109011527: Try using template func.
   std::vector<int64_t> fea_val_hash;
@@ -153,7 +153,7 @@ std::vector<int64_t> FeaHash::FeaRegister(
 }
 
 
-std::vector<int64_t> FeaHash::FeaRegister(
+std::vector<int64_t> FeaHash::GetFeaHash(
     const std::string& fea_name, const int32_t fea_value) {
   /** TODO@202109011527: Try using template func.
   std::vector<int64_t> fea_val_hash;
@@ -170,7 +170,7 @@ std::vector<int64_t> FeaHash::FeaRegister(
 
 
 
-std::vector<int64_t> FeaHash::FeaRegister(
+std::vector<int64_t> FeaHash::GetFeaHash(
     const std::string& fea_name, const float fea_value) {
   /** TODO@202109011527: Try using template func. 
   std::vector<int64_t> fea_val_hash;
@@ -186,7 +186,7 @@ std::vector<int64_t> FeaHash::FeaRegister(
 }
 
 
-std::vector<int64_t> FeaHash::FeaRegister(
+std::vector<int64_t> FeaHash::GetFeaHash(
     const std::string& fea_name, const std::vector<float>& fea_value) {
   /** TODO@202109011527: Try using template func. 
   std::vector<int64_t> fea_val_hash;
@@ -202,7 +202,7 @@ std::vector<int64_t> FeaHash::FeaRegister(
 }
 
 
-std::vector<int64_t> FeaHash::FeaRegister(
+std::vector<int64_t> FeaHash::GetFeaHash(
     const std::string& fea_name, const std::vector<std::string>& fea_value) {
   /** TODO@202109011527: Try using template func.  
   std::vector<int64_t> fea_val_hash;
@@ -218,7 +218,7 @@ std::vector<int64_t> FeaHash::FeaRegister(
 }
 
 
-std::vector<int64_t> FeaHash::FeaRegister(
+std::vector<int64_t> FeaHash::GetFeaHash(
     const std::string& fea_name, const std::vector<int32_t>& fea_value) {
   /** TODO@202109011527: Try using template func.
   std::vector<int64_t> fea_val_hash;

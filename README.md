@@ -54,8 +54,8 @@ feahash = pyfeather.FeaHash("./conf/feather.conf")
 
 # Getting hash of value 2 and '2' of 'fea1', which is an discrete 
 # feature, and both hash results should be same.
-fea1_hash_str2: List[int] = feahash.FeaRegister("fea1", "2")
-fea1_hash_int2: List[int] = feahash.FeaRegister("fea1", 2)
+fea1_hash_str2: List[int] = feahash.GetFeaHash("fea1", "2")
+fea1_hash_int2: List[int] = feahash.GetFeaHash("fea1", 2)
 # [10100070] [10100070]
 print(fea1_hash_str2, fea1_hash_int2)
 
@@ -63,9 +63,9 @@ print(fea1_hash_str2, fea1_hash_int2)
 # is an continuous feature, and the hash-bucket of any value of 
 # this feature should always be 0, so all value has same feature 
 # hash result.
-fea10_hash_float3p14: List[int] = feahash.FeaRegister("fea10", 3.14)
-fea10_hash_str3p14: List[int] = feahash.FeaRegister("fea10", '3.14')
-fea10_hash_float5p12: List[int] = feahash.FeaRegister("fea10", 5.12)
+fea10_hash_float3p14: List[int] = feahash.GetFeaHash("fea10", 3.14)
+fea10_hash_str3p14: List[int] = feahash.GetFeaHash("fea10", '3.14')
+fea10_hash_float5p12: List[int] = feahash.GetFeaHash("fea10", 5.12)
 # [11000000] [11000000] [11000000] 
 print(fea10_hash_float3p14, fea10_hash_str3p14, fea10_hash_float5p12)
 
@@ -74,8 +74,8 @@ print(fea10_hash_float3p14, fea10_hash_str3p14, fea10_hash_float5p12)
 # 4-dim vectors' feature-hash-bucket of this feature should always 
 # be [0, 1, 2, 3], and like continusous-feature, all feature-hash of 
 # any value of this feature should be same.
-fea11_hash_4to1: List[int] = feahash.FeaRegister("fea11", [4.0, 3.0, 2.0, 1.0])
-fea11_hash_1to4: List[int] = feahash.FeaRegister("fea11", [1.0, 2.0, 3.0, 4.0])
+fea11_hash_4to1: List[int] = feahash.GetFeaHash("fea11", [4.0, 3.0, 2.0, 1.0])
+fea11_hash_1to4: List[int] = feahash.GetFeaHash("fea11", [1.0, 2.0, 3.0, 4.0])
 # [11100000, 11100001, 11100002, 11100003]
 # [11100000, 11100001, 11100002, 11100003]
 print(fea11_hash_4to1, fea11_hash_1to4)

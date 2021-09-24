@@ -84,7 +84,7 @@ TEST(TEST_LibsvmExtractor, Extract) {
     if (item_.size() == 0) { continue; }
     if (index == 0) { ASSERT_THAT(item_, "0"); }
     if (index == 1) { 
-      std::string target_ = feahash_.FeaHash2FeaIndexStr(feahash_.FeaRegister("fea1", 2)[0]) + ":1";
+      std::string target_ = feahash_.FeaHash2FeaIndexStr(feahash_.GetFeaHash("fea1", 2)[0]) + ":1";
       ASSERT_THAT(item_, target_);
     }
     if (index >= 2 && index < 5) {
@@ -92,7 +92,7 @@ TEST(TEST_LibsvmExtractor, Extract) {
       std::vector<std::string> targets_;
       //std::cout << "dbg0 " << item_ << std::endl;
       for (auto val_ : fea8_val_) {
-        int64_t curr_feahash_ = feahash_.FeaRegister("fea8", val_)[0];
+        int64_t curr_feahash_ = feahash_.GetFeaHash("fea8", val_)[0];
         std::string curr_target_ = feahash_.FeaHash2FeaIndexStr(curr_feahash_) + ":1"; 
         targets_.emplace_back(curr_target_);
         //std::cout << "dbg1 " << val_ << ", " << curr_feahash_ << ", " << curr_target_ << std::endl;
@@ -100,13 +100,13 @@ TEST(TEST_LibsvmExtractor, Extract) {
       ASSERT_THAT((std::find(targets_.begin(), targets_.end(), item_) != targets_.end()), true);
     }
     if (index == 5) {
-      std::string target_ = feahash_.FeaHash2FeaIndexStr(feahash_.FeaRegister("fea10", (float)3.14)[0]) 
+      std::string target_ = feahash_.FeaHash2FeaIndexStr(feahash_.GetFeaHash("fea10", (float)3.14)[0]) 
           + ":" + std::to_string(3.14);
       ASSERT_THAT(item_, target_);
     }
     if (index >=6 && index < 10) {
       std::vector<float> fea11_val_ = record0["fea11"].get<std::vector<float>>();
-      std::vector<int64_t> fea11_hash_ = feahash_.FeaRegister("fea11", fea11_val_);
+      std::vector<int64_t> fea11_hash_ = feahash_.GetFeaHash("fea11", fea11_val_);
       std::string fea11_index_ = feahash_.FeaHash2FeaIndexStr(fea11_hash_[index - 6]);
       std::string target_ = fea11_index_ + ":" + std::to_string(fea11_val_[index - 6]);
       ASSERT_THAT(item_, target_); 
@@ -131,6 +131,31 @@ TEST(TEST_LibsvmExtractor, Extract) {
     index++;
   } 
   ASSERT_THAT(index, 10 - 1);
+}
+
+
+TEST(TEST_LibsvmExtractor, BatchExtract) {
+  feather::LibsvmExtractor extractor0_ = feather::LibsvmExtractor(
+      FEATHER_CONF, "ctr", true);
+
+  nlohmann::json record0 = {
+      {"ctr", "0"}, {"fea_fake", "1"}, {"fea1", 2}, {"fea8", {1, 0, 2}}, 
+      {"fea10", 3.14}, {"fea11", {4, 3, 2, 1}}
+  };
+  nlohmann::json record1 = {
+      {"ctr", "1"}, {"fea1", "3"}, {"fea8", {5, 1, 3}}, 
+      {"fea10", 10.24}, {"fea11", {1, 2, 3, 4}} 
+  };
+  nlohmann::json record2 = {
+      {"ctr", "0"}, {"fea1", 5}, {"fea8", {6, 2, 5}}, 
+      {"fea10", 5.12}, {"fea11", {0.8, 1.6, 3.2, 6.4}} 
+  };
+  std::vector<nlohmann::json> records0 = { record0, record1, record2 };
+  std::vector<std::string> records0_output = extractor0_.BatchExtract(records0, true);
+  ASSERT_THAT(records0_output.size(), records0.size());
+  for (int32_t i = 0;  i < records0_output.size(); ++i) {
+    ASSERT_EQ(records0_output[i], extractor0_.Extract(records0[i]));
+  }
 }
 
 

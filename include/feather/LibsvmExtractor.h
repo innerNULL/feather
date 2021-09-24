@@ -6,6 +6,7 @@
 
 
 #include <string>
+#include <vector>
 #include <unordered_map>
 #include <nlohmann/json.hpp>
 
@@ -26,6 +27,11 @@ class LibsvmExtractor : public FeaExtractor {
 
   std::string Extract(const std::string& flat_json, const bool with_label=true);
   std::string Extract(const nlohmann::json& flat_json, const bool with_label=true);
+  
+  std::vector<std::string> BatchExtract(
+      const std::vector<nlohmann::json>& flat_json, const bool with_label=true);
+  std::vector<std::string> BatchExtract(
+      const std::vector<std::string>& flat_json, const bool with_label=true);
 
   std::string ExtractLabel(const nlohmann::json& flat_json);
 

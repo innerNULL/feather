@@ -29,8 +29,8 @@ TEST(TEST_FeaHash, FeaHash) {
   ASSERT_THAT(slot101->GetSlotID(), 101);
   ASSERT_THAT(slot101->GetBucketSize(), 100); 
 
-  std::vector<int64_t> fea1_str128_hash = feahash_.FeaRegister("fea1", "128");
-  std::vector<int64_t> fea1_int128_hash = feahash_.FeaRegister("fea1", 128);
+  std::vector<int64_t> fea1_str128_hash = feahash_.GetFeaHash("fea1", "128");
+  std::vector<int64_t> fea1_int128_hash = feahash_.GetFeaHash("fea1", 128);
   int64_t str128_hash = std::hash<std::string>()("128");
   int64_t fea1_str128_target_hash = feahash_generator(
       str128_hash, slot101->GetSlotID(), slot101->GetBucketSize(), 
@@ -40,8 +40,8 @@ TEST(TEST_FeaHash, FeaHash) {
   ASSERT_THAT(fea1_int128_hash[0], fea1_str128_target_hash);
   ASSERT_THAT(fea1_str128_hash, fea1_int128_hash);
   /// Fea1 tmp test for dev and check twice
-  std::vector<int64_t> fea1_val1_hash = feahash_.FeaRegister("fea1", "val1");
-  std::vector<int64_t> fea1_val2_hash = feahash_.FeaRegister("fea1", "val2");
+  std::vector<int64_t> fea1_val1_hash = feahash_.GetFeaHash("fea1", "val1");
+  std::vector<int64_t> fea1_val2_hash = feahash_.GetFeaHash("fea1", "val2");
   int64_t val1_hash = std::hash<std::string>()("val1");
   int64_t val2_hash = std::hash<std::string>()("val2");
   int64_t target_fea1val1_hash = feahash_generator(
@@ -60,9 +60,9 @@ TEST(TEST_FeaHash, FeaHash) {
   ASSERT_THAT(slot110->GetSlotID(), 110);
   ASSERT_THAT(slot110->GetBucketSize(), 1); 
 
-  std::vector<int64_t> fea10_float3p14_hash = feahash_.FeaRegister("fea10", (float)3.14);
-  std::vector<int64_t> fea10_str3p14_hash = feahash_.FeaRegister("fea10", "3.14");
-  std::vector<int64_t> fea10_str3p15_hash = feahash_.FeaRegister("fea10", "3.15"); 
+  std::vector<int64_t> fea10_float3p14_hash = feahash_.GetFeaHash("fea10", (float)3.14);
+  std::vector<int64_t> fea10_str3p14_hash = feahash_.GetFeaHash("fea10", "3.14");
+  std::vector<int64_t> fea10_str3p15_hash = feahash_.GetFeaHash("fea10", "3.15"); 
   int64_t target_fea10_hash = 
       slot110->GetSlotID() * pow(10, feahash_.GetFeaBucketCodeLength());
   ASSERT_THAT(fea10_float3p14_hash.size(), 1);
@@ -76,7 +76,7 @@ TEST(TEST_FeaHash, FeaHash) {
   ASSERT_THAT(slot111->GetBucketSize(), 4);
   
   std::vector<float> fea11_vec_1 = {4.0, 3.0, 2.0, 1.0};
-  std::vector<int64_t> fea11_vec_1_hash = feahash_.FeaRegister("fea11", fea11_vec_1);
+  std::vector<int64_t> fea11_vec_1_hash = feahash_.GetFeaHash("fea11", fea11_vec_1);
   ASSERT_THAT(fea11_vec_1_hash.size(), slot111->GetBucketSize());
 
   for (int32_t i = 0; i < slot111->GetBucketSize(); ++i) {
@@ -134,7 +134,7 @@ TEST(TEST_FeaHash, SlotRegister) {
 }
 
 
-TEST(TEST_FeaHash, FeaRegister) {
+TEST(TEST_FeaHash, GetFeaHash) {
   /// Test with demo fea-schema config: See `TEST(TEST_FeaHash, FeaHash)`
 
   /// Twice test
@@ -146,8 +146,8 @@ TEST(TEST_FeaHash, FeaRegister) {
   int32_t hash_bucket_code_digits = std::string("1024").size();
 
   /// Test single discrete feature
-  std::vector<int64_t> test1_str1_feahash = feahash_.FeaRegister("test1", "1");
-  std::vector<int64_t> test1_int1_feahash = feahash_.FeaRegister("test1", 1);
+  std::vector<int64_t> test1_str1_feahash = feahash_.GetFeaHash("test1", "1");
+  std::vector<int64_t> test1_int1_feahash = feahash_.GetFeaHash("test1", 1);
   int64_t test1_str1_hash = std::hash<std::string>()("1");
   ///test1_str1_hash = abs(test1_str1_hash);
   /// TODO The following not same with the result of 
@@ -160,8 +160,8 @@ TEST(TEST_FeaHash, FeaRegister) {
   ASSERT_THAT(test1_int1_feahash[0], test1_str1_target_hash);
   ASSERT_THAT(test1_str1_feahash, test1_int1_feahash);
 
-  std::vector<int64_t> test2_str256_feahash = feahash_.FeaRegister("test2", "256");
-  std::vector<int64_t> test2_int256_feahash = feahash_.FeaRegister("test2", 256);
+  std::vector<int64_t> test2_str256_feahash = feahash_.GetFeaHash("test2", "256");
+  std::vector<int64_t> test2_int256_feahash = feahash_.GetFeaHash("test2", 256);
   int64_t test2_str256_hash = std::hash<std::string>()("256");
   int64_t test2_str256_target_hash = feahash_generator(
       test2_str256_hash, 102, 1024, hash_bucket_code_digits);
@@ -174,21 +174,21 @@ TEST(TEST_FeaHash, FeaRegister) {
   std::vector<std::string> test1_multi_hot_str = {"1", "2"};
   std::vector<int32_t> test1_multi_hot_int = {1, 2};
   std::vector<int64_t> test1_multi_hot_str_feahash = 
-      feahash_.FeaRegister("test1", test1_multi_hot_str);
+      feahash_.GetFeaHash("test1", test1_multi_hot_str);
   std::vector<int64_t> test1_multi_hot_int_feahash = 
-      feahash_.FeaRegister("test1", test1_multi_hot_int);
+      feahash_.GetFeaHash("test1", test1_multi_hot_int);
   ASSERT_THAT(test1_multi_hot_str_feahash.size(), test1_multi_hot_int.size());
   ASSERT_THAT(test1_multi_hot_int_feahash.size(), test1_multi_hot_int.size());
   for (int32_t i = 0; i < test1_multi_hot_str.size(); ++i) {
     ASSERT_THAT(test1_multi_hot_str_feahash[i], test1_multi_hot_int_feahash[i]);
     ASSERT_THAT(test1_multi_hot_str_feahash[i], 
-        feahash_.FeaRegister("test1", test1_multi_hot_str[i])[0]);
+        feahash_.GetFeaHash("test1", test1_multi_hot_str[i])[0]);
   }
 
   /// Test continuous feature
-  std::vector<int64_t> test3_str3p14_feahash = feahash_.FeaRegister("test3", "3.14");
-  //std::vector<int64_t> test3_float3p14_feahash = feahash_.FeaRegister("test3", 3.14);
-  std::vector<int64_t> test3_float3p14_feahash = feahash_.FeaRegister(
+  std::vector<int64_t> test3_str3p14_feahash = feahash_.GetFeaHash("test3", "3.14");
+  //std::vector<int64_t> test3_float3p14_feahash = feahash_.GetFeaHash("test3", 3.14);
+  std::vector<int64_t> test3_float3p14_feahash = feahash_.GetFeaHash(
       "test3", (float)(3.14));
   int64_t test3_str3p14_target_hash = 103 * pow(10, hash_bucket_code_digits);
   ASSERT_THAT(test3_str3p14_feahash.size(), 1);
@@ -198,7 +198,7 @@ TEST(TEST_FeaHash, FeaRegister) {
 
   /// Test float-vector(embedding) feature.
   std::vector<float> test4_val = {1.1, 2.2, 3.3, 4.4};
-  std::vector<int64_t> test4_feahash = feahash_.FeaRegister("test4", test4_val);
+  std::vector<int64_t> test4_feahash = feahash_.GetFeaHash("test4", test4_val);
   ASSERT_THAT(test4_feahash.size(), test4_val.size());
   for (int32_t i = 0; i < test4_val.size(); ++i) {
     ASSERT_THAT(test4_feahash[i], 104 * pow(10, hash_bucket_code_digits) + i); 

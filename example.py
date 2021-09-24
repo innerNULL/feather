@@ -10,35 +10,35 @@ def main():
 
     fea_hash = pyfeather.FeaHash("../conf/feather.conf")
     
-    fea1val1_id = fea_hash.FeaRegister("fea1", "val1")
+    fea1val1_id = fea_hash.GetFeaHash("fea1", "val1")
     print("fea1#val1", fea1val1_id)
-    fea1val2_id = fea_hash.FeaRegister("fea1", "val2")
+    fea1val2_id = fea_hash.GetFeaHash("fea1", "val2")
     print("fea1#val2", fea1val2_id)
-    fea1val1val2_id = fea_hash.FeaRegister("fea1", ["val1", "val2"])
+    fea1val1val2_id = fea_hash.GetFeaHash("fea1", ["val1", "val2"])
     print("fea1#val1_val2", fea1val1val2_id) 
 
-    fea2val1_id = fea_hash.FeaRegister("fea2", "val1")
+    fea2val1_id = fea_hash.GetFeaHash("fea2", "val1")
     print("fea2#val1", fea2val1_id)
-    fea2val2_id = fea_hash.FeaRegister("fea2", "val2")
+    fea2val2_id = fea_hash.GetFeaHash("fea2", "val2")
     print("fea2#val2", fea2val2_id)
 
-    fea8val1_id = fea_hash.FeaRegister("fea8", "val1")
+    fea8val1_id = fea_hash.GetFeaHash("fea8", "val1")
     print("fea8#val1", fea8val1_id)
-    fea8val2_id = fea_hash.FeaRegister("fea8", "val2")
+    fea8val2_id = fea_hash.GetFeaHash("fea8", "val2")
     print("fea8#val2", fea8val2_id)
 
-    fea10val1_id = fea_hash.FeaRegister("fea10", 3.14)
+    fea10val1_id = fea_hash.GetFeaHash("fea10", 3.14)
     print("fea10#val1", fea10val1_id)
-    fea10val2_id = fea_hash.FeaRegister("fea10", 128)
+    fea10val2_id = fea_hash.GetFeaHash("fea10", 128)
     print("fea10#val2", fea10val2_id)
 
-    fea11val1_id = fea_hash.FeaRegister("fea11", [1,2,3,4])
+    fea11val1_id = fea_hash.GetFeaHash("fea11", [1,2,3,4])
     print("fea11#val1", fea11val1_id)
-    fea11val2_id = fea_hash.FeaRegister("fea11", [4.0, 3.0, 2.0, 1.0])
+    fea11val2_id = fea_hash.GetFeaHash("fea11", [4.0, 3.0, 2.0, 1.0])
     print("fea11#val2", fea11val2_id)
 
-    fea12val1_1_id = fea_hash.FeaRegister("fea12", "1")
-    fea12val1_2_id = fea_hash.FeaRegister("fea12", 1)
+    fea12val1_1_id = fea_hash.GetFeaHash("fea12", "1")
+    fea12val1_2_id = fea_hash.GetFeaHash("fea12", 1)
     print("fea12='1' vs fea12=1: ", fea12val1_1_id, fea12val1_2_id)
 
 

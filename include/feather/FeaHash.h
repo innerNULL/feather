@@ -32,17 +32,17 @@ class FeaHash {
   std::vector<int64_t> Fea2FeaHash(
       const std::string& fea_name, const VAL_TYPE& fea_value);
 
-  std::vector<int64_t> FeaRegister(
+  std::vector<int64_t> GetFeaHash(
       const std::string& fea_name, const std::string& fea_value);
-  std::vector<int64_t> FeaRegister(
+  std::vector<int64_t> GetFeaHash(
       const std::string& fea_name, const int32_t fea_value);
-  std::vector<int64_t> FeaRegister(
+  std::vector<int64_t> GetFeaHash(
       const std::string& fea_name, const std::vector<float>& fea_value);
-  std::vector<int64_t> FeaRegister(
+  std::vector<int64_t> GetFeaHash(
       const std::string& fea_name, const float fea_value);
-  std::vector<int64_t> FeaRegister(
+  std::vector<int64_t> GetFeaHash(
       const std::string& fea_name, const std::vector<std::string>& fea_value);
-  std::vector<int64_t> FeaRegister(
+  std::vector<int64_t> GetFeaHash(
       const std::string& fea_name, const std::vector<int32_t>& fea_value);
 
   std::string FeaHash2FeaName(const int64_t fea_hash);

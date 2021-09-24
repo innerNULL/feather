@@ -19,7 +19,12 @@ void LibsvmExtractor_pybind(py::module &m) {
       .def(py::init<const std::string&, const std::string&, const bool>())
       .def("Extract", 
           static_cast<std::string (LibsvmExtractor::*)(const std::string&, const bool)>(
-            &LibsvmExtractor::Extract));
+            &LibsvmExtractor::Extract))
+      .def("BatchExtract", 
+          static_cast<
+              std::vector<std::string> (LibsvmExtractor::*)(const std::vector<std::string>&, const bool)
+          >(
+              &LibsvmExtractor::BatchExtract));
 }
 
 
