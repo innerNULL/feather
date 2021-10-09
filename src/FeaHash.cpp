@@ -88,6 +88,11 @@ std::string FeaHash::FeaHash2FeaIndexStr(const int64_t fea_hash) {
 }
 
 
+int32_t FeaHash::FeaHash2FeaIndex(const int64_t fea_hash) {
+  return std::stoi(this->FeaHash2FeaIndexStr(fea_hash));
+}
+
+
 const FeaSlot* FeaHash::GetSlot(const std::string& fea_name) {
   FeaSlot* slot = nullptr;
   if (this->name2slot.find(fea_name) != this->name2slot.end()) {
@@ -138,111 +143,58 @@ int16_t FeaHash::FeaValCheck(
 
 
 std::vector<int64_t> FeaHash::GetFeaHash(
-    const std::string& fea_name, const std::string& fea_value) {
-  /** TODO@202109011527: Try using template func.
-  std::vector<int64_t> fea_val_hash;
-  int8_t fea_type = this->name2slot[fea_name].GetType();
-  if (this->FeaValCheck(fea_name) == 0) {
-    FeaSlot* fea_slot_ = &(this->name2slot[fea_name]);
-    FeaValue fea_value_(fea_value, fea_type);
-    fea_val_hash = this->FeaVal2FeaHash(&fea_value_, fea_slot_);
-  }
-  return fea_val_hash;
-  */
-  return this->Fea2FeaHash<std::string>(fea_name, fea_value);
+    const std::string& fea_name, const std::string& fea_value, 
+    uint16_t hash_type) {
+  return this->Fea2FeaHash<std::string>(fea_name, fea_value, hash_type);
 }
 
 
 std::vector<int64_t> FeaHash::GetFeaHash(
-    const std::string& fea_name, const int32_t fea_value) {
-  /** TODO@202109011527: Try using template func.
-  std::vector<int64_t> fea_val_hash;
-  int8_t fea_type = this->name2slot[fea_name].GetType();
-  if (this->FeaValCheck(fea_name) == 0) {
-    FeaSlot* fea_slot_ = &(this->name2slot[fea_name]);
-    FeaValue fea_value_(fea_value, fea_type);
-    fea_val_hash = this->FeaVal2FeaHash(&fea_value_, fea_slot_);
-  }
-  return fea_val_hash;
-  */
-  return this->Fea2FeaHash<int32_t>(fea_name, fea_value);
+    const std::string& fea_name, const int32_t fea_value, 
+    uint16_t hash_type) {
+  return this->Fea2FeaHash<int32_t>(fea_name, fea_value, hash_type);
 }
 
 
 
 std::vector<int64_t> FeaHash::GetFeaHash(
-    const std::string& fea_name, const float fea_value) {
-  /** TODO@202109011527: Try using template func. 
-  std::vector<int64_t> fea_val_hash;
-  int8_t fea_type = this->name2slot[fea_name].GetType();
-  if (this->FeaValCheck(fea_name) == 0) {
-    FeaSlot* fea_slot_ = &(this->name2slot[fea_name]);
-    FeaValue fea_value_(fea_value, fea_type);
-    fea_val_hash = this->FeaVal2FeaHash(&fea_value_, fea_slot_);
-  }
-  return fea_val_hash;
-  */
-  return this->Fea2FeaHash<float>(fea_name, fea_value);
+    const std::string& fea_name, const float fea_value, 
+    uint16_t hash_type) {
+  return this->Fea2FeaHash<float>(fea_name, fea_value, hash_type);
 }
 
 
 std::vector<int64_t> FeaHash::GetFeaHash(
-    const std::string& fea_name, const std::vector<float>& fea_value) {
-  /** TODO@202109011527: Try using template func. 
-  std::vector<int64_t> fea_val_hash;
-  int8_t fea_type = this->name2slot[fea_name].GetType();
-  FeaValue fea_value_(fea_value, fea_type);
-  if (this->FeaValCheck(fea_name, &fea_value_) == 0) {
-    FeaSlot* fea_slot_ = &(this->name2slot[fea_name]);
-    fea_val_hash = this->FeaVal2FeaHash(&fea_value_, fea_slot_);
-  }
-  return fea_val_hash;
-  */
-  return this->Fea2FeaHash< std::vector<float> >(fea_name, fea_value);
+    const std::string& fea_name, const std::vector<float>& fea_value, 
+    uint16_t hash_type) {
+  return this->Fea2FeaHash< std::vector<float> >(fea_name, fea_value, hash_type);
 }
 
 
 std::vector<int64_t> FeaHash::GetFeaHash(
-    const std::string& fea_name, const std::vector<std::string>& fea_value) {
-  /** TODO@202109011527: Try using template func.  
-  std::vector<int64_t> fea_val_hash;
-  int8_t fea_type = this->name2slot[fea_name].GetType();
-  FeaValue fea_value_(fea_value, fea_type);
-  if (this->FeaValCheck(fea_name, &fea_value_) == 0) {
-    FeaSlot* fea_slot_ = &(this->name2slot[fea_name]);
-    fea_val_hash = this->FeaVal2FeaHash(&fea_value_, fea_slot_);
-  }
-  return fea_val_hash;
-  */
-  return this->Fea2FeaHash< std::vector<std::string> >(fea_name, fea_value);
+    const std::string& fea_name, const std::vector<std::string>& fea_value, 
+    uint16_t hash_type) {
+  return this->Fea2FeaHash< std::vector<std::string> >(fea_name, fea_value, hash_type);
 }
 
 
 std::vector<int64_t> FeaHash::GetFeaHash(
-    const std::string& fea_name, const std::vector<int32_t>& fea_value) {
-  /** TODO@202109011527: Try using template func.
-  std::vector<int64_t> fea_val_hash;
-  int8_t fea_type = this->name2slot[fea_name].GetType();
-  FeaValue fea_value_(fea_value, fea_type);
-  if (this->FeaValCheck(fea_name, &fea_value_) == 0) {
-    FeaSlot* fea_slot_ = &(this->name2slot[fea_name]);
-    fea_val_hash = this->FeaVal2FeaHash(&fea_value_, fea_slot_);
-  }
-  return fea_val_hash;
-  */
-  return this->Fea2FeaHash< std::vector<int32_t> >(fea_name, fea_value);
+    const std::string& fea_name, const std::vector<int32_t>& fea_value, 
+    uint16_t hash_type) {
+  return this->Fea2FeaHash< std::vector<int32_t> >(fea_name, fea_value, hash_type);
 }
 
 
 template<typename VAL_TYPE>
 std::vector<int64_t> FeaHash::Fea2FeaHash(
-    const std::string& fea_name, const VAL_TYPE& fea_value) {
+    const std::string& fea_name, const VAL_TYPE& fea_value, 
+    uint16_t hash_type) {
   std::vector<int64_t> fea_val_hash;
   int8_t fea_type = this->name2slot[fea_name].GetType();
   FeaValue fea_value_(fea_value, fea_type);
   if (this->FeaValCheck(fea_name, &fea_value_) == 0) {
     FeaSlot* fea_slot_ = &(this->name2slot[fea_name]);
-    fea_val_hash = this->FeaVal2FeaHash(&fea_value_, fea_slot_);
+    fea_val_hash = this->FeaVal2FeaHash(&fea_value_, fea_slot_, hash_type);
   }
   return fea_val_hash;
 }
@@ -274,9 +226,9 @@ int32_t FeaHash::GetFeaBucketCodeLength() {
 
 
 std::vector<int32_t> FeaHash::FeaVal2FeaHashBucket(
-    FeaValue* fea_val, FeaSlot* fea_slot) {
+    FeaValue* fea_val, FeaSlot* fea_slot, uint16_t hash_type) {
   std::vector<int32_t> hash_bucket_id;
-  std::vector<int64_t> fea_hash = fea_val->GetHash();
+  std::vector<int64_t> fea_hash = fea_val->GetHash(hash_type);
 
   hash_bucket_id.resize(fea_hash.size());
   if (fea_val->GetType() == 1 && (
@@ -299,10 +251,10 @@ std::vector<int32_t> FeaHash::FeaVal2FeaHashBucket(
 
 
 std::vector<std::string> FeaHash::FeaVal2FeaHashBucketCode(
-    FeaValue* fea_val, FeaSlot* fea_slot) {
+    FeaValue* fea_val, FeaSlot* fea_slot, uint16_t hash_type) {
   std::vector<std::string> fea_bucket_code;
   std::vector<int32_t> hash_bucket_id = this->FeaVal2FeaHashBucket(
-      fea_val, fea_slot);
+      fea_val, fea_slot, hash_type);
   fea_bucket_code.resize(hash_bucket_id.size());
   for (int32_t i = 0; i < hash_bucket_id.size(); ++i) {
     fea_bucket_code[i] = num2str_code<int32_t>(
@@ -313,11 +265,11 @@ std::vector<std::string> FeaHash::FeaVal2FeaHashBucketCode(
 
 
 std::vector<int64_t> FeaHash::FeaVal2FeaHash(
-    FeaValue* fea_val, FeaSlot* fea_slot) {
+    FeaValue* fea_val, FeaSlot* fea_slot, uint16_t hash_type) {
   std::vector<int64_t> fea_val_hash;
   int32_t slot_id = fea_slot->GetSlotID();
   std::vector<std::string> fea_bucket_code = this->FeaVal2FeaHashBucketCode(
-      fea_val, fea_slot);
+      fea_val, fea_slot, hash_type);
   fea_val_hash.resize(fea_bucket_code.size());
   for (int32_t i = 0; i < fea_bucket_code.size(); ++i) {
     fea_val_hash[i] = std::stol(

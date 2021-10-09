@@ -67,6 +67,8 @@ execute_process(COMMAND bash -c "${CMAKEUP_VCPKG_BIN} install pybind11")
 find_package(pybind11 CONFIG REQUIRED)
 include_directories(${pybind11_INCLUDE_DIRS})
 
+execute_process(COMMAND bash -c "${CMAKEUP_VCPKG_BIN} install xxhash")
+find_package(xxHash CONFIG REQUIRED)
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src LIB_SOURCE)
@@ -79,10 +81,12 @@ if (BUILD_EXAMPLES)
     #target_link_libraries(example PRIVATE pybind11::module pybind11::lto pybind11::windows_extras pybind11::embed)
     #target_link_libraries(example PRIVATE pybind11::embed)
     target_link_libraries(example PRIVATE absl::strings)
+    target_link_libraries(example PRIVATE xxHash::xxhash) 
 endif()
 
 pybind11_add_module(pyfeather ${LIB_SOURCE} ${PYBINDER})
 target_link_libraries(pyfeather PRIVATE absl::strings)
+target_link_libraries(pyfeather PRIVATE xxHash::xxhash) 
 
 if (BUILD_TESTS)
   message(STATUS "Building with unit-tests.")

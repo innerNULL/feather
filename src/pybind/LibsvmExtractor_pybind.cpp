@@ -16,7 +16,8 @@ namespace feather {
 void LibsvmExtractor_pybind(py::module &m) {
   py::class_<LibsvmExtractor>(m, "LibsvmExtractor")
       .def(py::init<>())
-      .def(py::init<const std::string&, const std::string&, const bool>())
+      .def(py::init<const std::string&, const std::string&, const bool, uint16_t>(), 
+          py::arg("feahash_conf"), py::arg("label"), py::arg("index"), py::arg("hash_type") = 0)
       .def("Extract", 
           static_cast<std::string (LibsvmExtractor::*)(const std::string&, const bool)>(
             &LibsvmExtractor::Extract))

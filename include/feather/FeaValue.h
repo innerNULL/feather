@@ -28,8 +28,11 @@ class FeaValue {
   FeaValue(const std::vector<float>& val, const int16_t type);
   FeaValue(const std::vector<double>& val, const int16_t type);
 
-  std::vector<int64_t> GetHash();
- 
+  template<typename HASH_VAL=int64_t>
+  std::vector<HASH_VAL> GetHash(uint16_t hash_type=0);
+  template<typename HASH_VAL=int64_t>
+  std::vector<HASH_VAL> GetHash(HASH_VAL (*hash_func)(std::string));
+
   const int16_t GetType();
 
   const std::vector<float>* GetVecValue();

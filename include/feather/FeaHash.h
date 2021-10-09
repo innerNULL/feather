@@ -30,22 +30,31 @@ class FeaHash {
 
   template<typename VAL_TYPE>
   std::vector<int64_t> Fea2FeaHash(
-      const std::string& fea_name, const VAL_TYPE& fea_value);
+      const std::string& fea_name, const VAL_TYPE& fea_value, 
+      uint16_t hash_type=0);
 
   std::vector<int64_t> GetFeaHash(
-      const std::string& fea_name, const std::string& fea_value);
+      const std::string& fea_name, const std::string& fea_value, 
+      uint16_t hash_type=0);
   std::vector<int64_t> GetFeaHash(
-      const std::string& fea_name, const int32_t fea_value);
+      const std::string& fea_name, const int32_t fea_value, 
+      uint16_t hash_type=0);
   std::vector<int64_t> GetFeaHash(
-      const std::string& fea_name, const std::vector<float>& fea_value);
+      const std::string& fea_name, const std::vector<float>& fea_value, 
+      uint16_t hash_type=0);
   std::vector<int64_t> GetFeaHash(
-      const std::string& fea_name, const float fea_value);
+      const std::string& fea_name, const float fea_value, 
+      uint16_t hash_type=0);
   std::vector<int64_t> GetFeaHash(
-      const std::string& fea_name, const std::vector<std::string>& fea_value);
+      const std::string& fea_name, const std::vector<std::string>& fea_value, 
+      uint16_t hash_type=0);
   std::vector<int64_t> GetFeaHash(
-      const std::string& fea_name, const std::vector<int32_t>& fea_value);
+      const std::string& fea_name, const std::vector<int32_t>& fea_value, 
+      uint16_t hash_type=0);
 
   std::string FeaHash2FeaName(const int64_t fea_hash);
+
+  int32_t FeaHash2FeaIndex(const int64_t fea_hash);
 
   std::string FeaHash2FeaIndexStr(const int64_t fea_hash);
 
@@ -56,7 +65,8 @@ class FeaHash {
   int16_t FeaValCheck(const std::string& name);
   int16_t FeaValCheck(const std::string& name, FeaValue* val);
 
-  std::vector<int64_t> FeaVal2FeaHash(FeaValue* fea_val, FeaSlot* fea_slot);
+  std::vector<int64_t> FeaVal2FeaHash(
+      FeaValue* fea_val, FeaSlot* fea_slot, uint16_t hash_type);
 
   const FeaSlot* GetSlot(const std::string& fea_name);
   const FeaSlot* GetSlot(const int32_t fea_slot); // TODO
@@ -70,10 +80,12 @@ class FeaHash {
   //void Transfer();
 
  protected:
-  std::vector<int32_t> FeaVal2FeaHashBucket(FeaValue* fea_val, FeaSlot* fea_slot);
+  std::vector<int32_t> FeaVal2FeaHashBucket(
+      FeaValue* fea_val, FeaSlot* fea_slot, uint16_t hash_type);
 
   /// for example, bucket id could be 35, bucket code could be '00035'.
-  std::vector<std::string> FeaVal2FeaHashBucketCode(FeaValue* fea_val, FeaSlot* fea_slot);
+  std::vector<std::string> FeaVal2FeaHashBucketCode(
+      FeaValue* fea_val, FeaSlot* fea_slot, uint16_t hash_type);
  
  private:
   std::string conf_path;

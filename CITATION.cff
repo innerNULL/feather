@@ -1,8 +1,8 @@
-@misc{Yt_My_Research_Software_2021,
-  author = {L Yt},
-  doi = {},
-  month = {09},
-  title = {{My Research Software}},
-  url = {https://github.com/innerNULL/feather},
-  year = {2021}
-}
+cff-version: 0.0.1
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: L
+    given-names: Yt
+title: "feather"
+repository-code: https://github.com/innerNULL/feather 
+date-released: 2021-09-03

@@ -181,14 +181,35 @@ FeaValue::FeaValue(
 }
 
 
-std::vector<int64_t> FeaValue::GetHash() {
-  std::vector<int64_t> output;
+template<typename HASH_VAL>
+std::vector<HASH_VAL> FeaValue::GetHash(uint16_t hash_type) {
+  std::vector<HASH_VAL> output;
+  if (hash_type == 0) {
+    HASH_VAL (*hash_func)(std::string) = [](std::string x) -> HASH_VAL {
+        return std::hash<std::string>()(x); };
+    output = this->GetHash<HASH_VAL>(hash_func);
+  } else if (hash_type == 1) {
+    /// TODO
+  } else {
+    std::cout << "Only supports hash-type 0 for now.." << std::endl;
+    throw "hash-type value not supports";
+  }
+  return output;
+}
+
+template std::vector<int64_t> FeaValue::GetHash<int64_t>(uint16_t hash_type);
+
+
+template<typename HASH_VAL>
+std::vector<HASH_VAL> FeaValue::GetHash(
+    HASH_VAL (*hash_func)(std::string)) {
+  std::vector<HASH_VAL> output;
   if (this->type == 0) {
     //output.emplace_back(
     //    std::hash<std::string>()(this->discrete_val));
     output.resize(this->discrete_val.size());
     for (int32_t i = 0; i < this->discrete_val.size(); ++i) {
-      output[i] = std::hash<std::string>()(this->discrete_val[i]);  
+      output[i] = (*hash_func)(this->discrete_val[i]);
     }
   } else if (this->type == 1) {
     /// Since for continuous-feature, the feature-hash bucket-size 
@@ -212,6 +233,8 @@ std::vector<int64_t> FeaValue::GetHash() {
   } 
   return output;
 }
+
+template std::vector<int64_t> FeaValue::GetHash<int64_t>(int64_t (*hash_func)(std::string));
 
 
 const std::vector<float>* FeaValue::GetVecValue() {

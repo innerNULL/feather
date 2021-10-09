@@ -16,7 +16,7 @@ namespace feather {
 
 
 LibsvmExtractor::LibsvmExtractor(const std::string& feahash_conf, 
-    const std::string& label, const bool index) {
+    const std::string& label, const bool index, uint16_t hash_type) {
   this->index = index;
   if (index) {
     /// TODO@202108201502
@@ -25,6 +25,7 @@ LibsvmExtractor::LibsvmExtractor(const std::string& feahash_conf,
   } 
   this->fea_hash = FeaHash(feahash_conf);
   this->label = label;
+  this->hash_type_ = hash_type;
 }
 
 
@@ -45,7 +46,8 @@ std::string LibsvmExtractor::Extract(
     /// Feature-Value hash-ids.
     auto json_val = flat_json[slot_name]; /// val
     FeaValue* fea_val = this->JsonVal2FeaVal(slot_type, json_val);
-    std::vector<int64_t> hash_id = this->fea_hash.FeaVal2FeaHash(fea_val, &slot);
+    std::vector<int64_t> hash_id = this->fea_hash.FeaVal2FeaHash(
+        fea_val, &slot, this->hash_type_);
 
     for (int32_t i = 0; i < hash_id.size(); ++i) {
       int64_t id;

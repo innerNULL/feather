@@ -23,22 +23,28 @@ void FeaHash_pybind(py::module& m) {
       .def("Hash2IndexDictBuild", &FeaHash::Hash2IndexDictBuild)
       .def("GetFeaHash", 
           static_cast<std::vector<int64_t> (FeaHash::*)(
-            const std::string&, const std::string&)>(&FeaHash::GetFeaHash))
+            const std::string&, const std::string&, uint16_t)>(&FeaHash::GetFeaHash), 
+          py::arg("fea_name"), py::arg("fea_value"), py::arg("hash_type") = 0)
       .def("GetFeaHash", 
           static_cast<std::vector<int64_t> (FeaHash::*)(
-            const std::string&, const int32_t)>(&FeaHash::GetFeaHash))
+            const std::string&, const int32_t, uint16_t)>(&FeaHash::GetFeaHash), 
+          py::arg("fea_name"), py::arg("fea_value"), py::arg("hash_type") = 0)
       .def("GetFeaHash", 
           static_cast<std::vector<int64_t> (FeaHash::*)(
-            const std::string&, const float)>(&FeaHash::GetFeaHash))
+            const std::string&, const float, uint16_t)>(&FeaHash::GetFeaHash), 
+          py::arg("fea_name"), py::arg("fea_value"), py::arg("hash_type") = 0)
       .def("GetFeaHash", 
           static_cast<std::vector<int64_t> (FeaHash::*)(
-            const std::string&, const std::vector<float>&)>(&FeaHash::GetFeaHash))
+            const std::string&, const std::vector<float>&, uint16_t)>(&FeaHash::GetFeaHash), 
+          py::arg("fea_name"), py::arg("fea_value"), py::arg("hash_type") = 0)
       .def("GetFeaHash",
           static_cast<std::vector<int64_t> (FeaHash::*)(
-            const std::string&, const std::vector<std::string>&)>(&FeaHash::GetFeaHash))
+            const std::string&, const std::vector<std::string>&, uint16_t)>(&FeaHash::GetFeaHash), 
+          py::arg("fea_name"), py::arg("fea_value"), py::arg("hash_type") = 0)
       .def("GetFeaHash",
           static_cast<std::vector<int64_t> (FeaHash::*)( 
-            const std::string&, const std::vector<int32_t>&)>(&FeaHash::GetFeaHash));
+            const std::string&, const std::vector<int32_t>&, uint16_t)>(&FeaHash::GetFeaHash), 
+          py::arg("fea_name"), py::arg("fea_value"), py::arg("hash_type") = 0); 
 }
 
 

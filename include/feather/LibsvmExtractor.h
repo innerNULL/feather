@@ -21,7 +21,8 @@ class LibsvmExtractor : public FeaExtractor {
  public:
   LibsvmExtractor() = default;
   LibsvmExtractor(const std::string& feahash_conf, 
-      const std::string& label="label", const bool index=false);
+      const std::string& label="label", const bool index=false, 
+      uint16_t hash_type=0);
 
   int32_t CheckField(const nlohmann::json& flat_json, const std::string& field);
 
@@ -43,6 +44,7 @@ class LibsvmExtractor : public FeaExtractor {
   std::string label;
   FeaHash fea_hash; 
   bool index = false; /// If convert fea-hash to index by rerank.
+  uint16_t hash_type_ = 0;
   std::unordered_map<int64_t, int64_t> hash_id2libsvm_id;
   std::unordered_map<int64_t, int64_t> libsvm_id2hash_id;
 };
