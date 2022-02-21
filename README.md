@@ -7,9 +7,9 @@ FEATure HashER
 ```bash
 cd  PATH/TO/FEATHER
 mkdir build && cd build
-cmake ../ -DBUILD_TESTS=ON # build with test 
+cmake ../ -DFEATHER_BUILD_TESTS=ON -DFEATHER_BUILD_PY_BINDER=OFF # build with test 
 #or 
-cmake ../
+cmake ../ -DFEATHER_BUILD_TESTS=OFF -DFEATHER_BUILD_PY_BINDER=OFF
 
 make -j12
 ```

@@ -5,6 +5,9 @@
 cmake_minimum_required(VERSION 3.14)
 project(example)
 
+include(FetchContent)
+include(ExternalProject)
+
 
 set(CMAKE_BUILD_TYPE "Debug")
 #set(CMAKE_CXX_FLAGS " -pthread -std=c++14 -funroll-loops -O3 -march=native -fPIC")
@@ -12,83 +15,87 @@ set(CMAKE_CXX_FLAGS " -pthread -std=c++14 -funroll-loops -O3 -march=native")
 set(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb")
 set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 
-option(BUILD_TESTS "Build tests" OFF)
-option(BUILD_EXAMPLES "Build examples" ON)
+option(FEATHER_BUILD_PY_BINDER "Build python binder" ON)
+option(FEATHER_BUILD_TESTS "Build tests" ON)
+option(FEATHER_BUILD_EXAMPLES "Build examples" ON)
 
-execute_process(COMMAND bash -c "which python3" OUTPUT_VARIABLE PYTHON3_ENV)
+
+execute_process(
+  COMMAND bash -c "which python3" 
+  OUTPUT_VARIABLE PYTHON3_ENV)
 if(NOT "${PYTHON3_ENV}" STREQUAL "")
     string(REPLACE "\n" "" PYTHON3_ENV ""${PYTHON3_ENV})
 endif()
-set(PYTHON_EXECUTABLE ${PYTHON3_ENV} CACHE STRING "PYTHON_EXECUTABLE")
+
+set(PYTHON_EXECUTABLE 
+  ${PYTHON3_ENV} CACHE STRING "PYTHON_EXECUTABLE")
 message(STATUS "PYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}")
 
-execute_process(COMMAND bash -c "pwd" OUTPUT_VARIABLE CURR_DIR)
-string(REPLACE "\n" "" CURR_DIR ${CURR_DIR}) 
-message(STATUS "CURR_DIR: ${CURR_DIR}")
 
-# Download cmakeup as pkg management.
-if(EXISTS "${CURR_DIR}/main.zip")
-    message(STATUS "cmakeup has been downloaded.")
+set(FETCHCONTENT_QUIET FALSE)
+set(GIT_HOST "ghproxy.com/https://github.com")
+
+set(VCPKG_FEATURE_FLAGS "versions")
+set(VCPKG_ROOT ${FETCHCONTENT_BASE_DIR}/vcpkg-src)
+set(_VCPKG_BIN ${VCPKG_ROOT}/vcpkg)
+set(_VCPKG_CMAKE 
+  ${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake)
+set(CMAKE_TOOLCHAIN_FILE ${_VCPKG_CMAKE})
+
+if (EXISTS ${_VCPKG_BIN})
+  message(
+    STATUS 
+    "vcpkg already located at ${_VCPKG_BIN}")
+  set(_VCPKG_EXISTS TRUE)
 else()
-    message(STATUS "downloading cmakeup first.") 
-    execute_process(
-        COMMAND bash -c "wget https://ghproxy.com/https://github.com/innerNULL/cmakeup/archive/refs/heads/main.zip"
-        WORKING_DIRECTORY ${CURR_DIR})
-    execute_process(
-        COMMAND unzip main.zip WORKING_DIRECTORY ${CURR_DIR})
+  message(STATUS "downloading vcpkg first")
+  FetchContent_Declare(
+    vcpkg
+    GIT_REPOSITORY https://${GIT_HOST}/microsoft/vcpkg.git  
+    GIT_TAG 2022.02.02
+    GIT_PROGRESS TRUE 
+    DOWNLOAD_NO_PROGRESS FALSE
+    PATCH_COMMAND 
+        cd <SOURCE_DIR> &&  
+        bash <SOURCE_DIR>/bootstrap-vcpkg.sh)
+  FetchContent_MakeAvailable(vcpkg)
 endif()
-set(CMKAEUP_ROOT_PATH "${CURR_DIR}/cmakeup-main/cmakeup")
-set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMKAEUP_ROOT_PATH}/module")
-include(cmakeup)
-cmakeup_init("${CURR_DIR}/_cmakeup_hub" "https://ghproxy.com/https://github.com")
-cmakeup_root_path_register(${CMKAEUP_ROOT_PATH})
-include(vcpkg_helpers)
 
-integrate_vcpkg(
-    "https://ghproxy.com/https://github.com/microsoft/vcpkg/archive/refs/heads/master.zip"  
-    "${CURR_DIR}"
-)
-message(STATUS "All vcpkg pkg are installed under ${CMAKEUP_VCPKG_ROOT}/packages")
-
-
-cmakeup_pkg_cmake_importer("abseil" "abseil-cpp")
-cmakeup_integrate_abseil_abseil_cpp("master" "null" "global")
-
-cmakeup_pkg_cmake_importer("gabime" "spdlog")
-cmakeup_integrate_gabime_spdlog("v1.x" "null" "global")
-
-cmakeup_pkg_cmake_importer("nlohmann" "json")
-cmakeup_integrate_nlohmann_json("master" "null" "global")
-
-
-message(STATUS "Default python environment is ${PYTHON3_ENV}")
-message(STATUS "Target python environment is ${PYTHON_EXECUTABLE}")
-execute_process(COMMAND bash -c "${CMAKEUP_VCPKG_BIN} install pybind11")
-find_package(pybind11 CONFIG REQUIRED)
-include_directories(${pybind11_INCLUDE_DIRS})
-
-execute_process(COMMAND bash -c "${CMAKEUP_VCPKG_BIN} install xxhash")
+include(${_VCPKG_CMAKE})
+execute_process(
+  COMMAND 
+      ${_VCPKG_BIN} integrate install 
+        --x-manifest-root=${CMAKE_SOURCE_DIR})
+find_package(absl CONFIG REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
+find_package(spdlog CONFIG REQUIRED)
 find_package(xxHash CONFIG REQUIRED)
+
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src LIB_SOURCE)
-aux_source_directory(${PROJECT_SOURCE_DIR}/src/pybind PYBINDER)
-add_library(feather STATIC ${LIB_SOURCE})
 
-if (BUILD_EXAMPLES)
-    add_executable(example "./example.cpp")
-    target_link_libraries(example PRIVATE feather)
-    #target_link_libraries(example PRIVATE pybind11::module pybind11::lto pybind11::windows_extras pybind11::embed)
-    #target_link_libraries(example PRIVATE pybind11::embed)
-    target_link_libraries(example PRIVATE absl::strings)
-    target_link_libraries(example PRIVATE xxHash::xxhash) 
+add_library(feather STATIC ${LIB_SOURCE})
+target_link_libraries(feather 
+  PRIVATE absl::strings)
+target_link_libraries(feather 
+  PRIVATE nlohmann_json nlohmann_json::nlohmann_json)
+target_link_libraries(feather 
+  PRIVATE spdlog::spdlog spdlog::spdlog_header_only)
+target_link_libraries(feather 
+  PRIVATE xxHash::xxhash) 
+
+
+if (${FEATHER_BUILD_EXAMPLES})
+  add_subdirectory(
+    ${CMAKE_CURRENT_SOURCE_DIR}/examples/cpp)
 endif()
 
-pybind11_add_module(pyfeather ${LIB_SOURCE} ${PYBINDER})
-target_link_libraries(pyfeather PRIVATE absl::strings)
-target_link_libraries(pyfeather PRIVATE xxHash::xxhash) 
+if (${FEATHER_BUILD_PY_BINDER})
+  add_subdirectory(
+    ${CMAKE_CURRENT_SOURCE_DIR}/bindings/python)
+endif()
 
-if (BUILD_TESTS)
-  message(STATUS "Building with unit-tests.")
-  add_subdirectory(./test/cpp)
+if (${FEATHER_BUILD_TESTS})
+  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/test/cpp)
 endif()

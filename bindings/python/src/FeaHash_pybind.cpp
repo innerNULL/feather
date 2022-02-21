@@ -5,7 +5,7 @@
 #include <pybind11/stl.h>
 
 #include "feather/FeaHash.h"
-#include "feather/pybind/FeaHash_pybind.h"
+#include "bindings/python/FeaHash_pybind.h"
 
 namespace py = pybind11;
 
