@@ -7,9 +7,15 @@ FEATure HashER
 ```bash
 cd  PATH/TO/FEATHER
 mkdir build && cd build
-cmake ../ -DBUILD_TESTS=ON # build with test 
-#or 
-cmake ../
+
+
+# Build with unit-test, without python-binding
+cmake ../ -DFEATHER_BUILD_TESTS=ON -DFEATHER_BUILD_PY_BINDER=OFF  
+# Build without unit-test and python-binding
+cmake ../ -DFEATHER_BUILD_TESTS=OFF -DFEATHER_BUILD_PY_BINDER=OFF
+# Build python binding
+cmake ../ -DFEATHER_BUILD_TESTS=OFF -DFEATHER_BUILD_PY_BINDER=ON -DPYTHON_EXECUTABLE=/usr/bin//python3.7
+
 
 make -j12
 ```

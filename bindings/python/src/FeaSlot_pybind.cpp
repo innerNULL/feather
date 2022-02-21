@@ -4,8 +4,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-#include "feather/FeaSlot.h"
-#include "feather/pybind/FeaSlot_pybind.h"
+#include "../FeaSlot_pybind.h"
 
 namespace py = pybind11;
 

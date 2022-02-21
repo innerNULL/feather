@@ -1,0 +1,23 @@
+{
+    "name": "feather",
+    "version": "0.0.5",
+    "dependencies": [
+        {
+            "name": "abseil",
+            "version>=": "2020-09-23#2"
+        }, 
+        {
+            "name": "spdlog", 
+            "version>=": "1.8.0#2"
+        }, 
+        {
+            "name": "nlohmann-json", 
+            "version>=": "3.9.1"
+        }, 
+        {
+            "name": "xxhash", 
+            "version>=": "0.8.0"
+        } 
+    ],
+    "builtin-baseline": "3426db05b996481ca31e95fff3734cf23e0f51bc"
+}

@@ -6,6 +6,7 @@
 
 
 #include <pybind11/pybind11.h>
+#include "feather/LibsvmExtractor.h"
 
 namespace py = pybind11;
 

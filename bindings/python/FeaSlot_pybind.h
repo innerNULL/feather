@@ -6,6 +6,7 @@
 
 
 #include <pybind11/pybind11.h>
+#include "feather/FeaSlot.h"
 
 namespace py = pybind11;
 

@@ -1,9 +1,9 @@
 /// file: pymodule.cpp
 
 
-#include "feather/pybind/FeaHash_pybind.h"
-#include "feather/pybind/FeaSlot_pybind.h"
-#include "feather/pybind/LibsvmExtractor_pybind.h"
+#include "../FeaHash_pybind.h"
+#include "../FeaSlot_pybind.h"
+#include "../LibsvmExtractor_pybind.h"
 
 
 namespace feather {
