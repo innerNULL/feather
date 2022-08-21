@@ -22,7 +22,7 @@ make -j12
 
 * **Python with pip**    
 ```bash
-cd feather && python3 -m pip install ./ -vvv
+python -m pip install git+https://github.com/innerNULL/feather.git -vvv
 # or
 python -m pip install https://github.com/innerNULL/feather/archive/refs/heads/main.zip -vvv
 # or
@@ -39,13 +39,6 @@ Stored in directory: /private/var/folders/4q/50_2647d1yb47jt9j6plwx2r0000gq/T/pi
 Successfully built pyfeather
 Installing collected packages: pyfeather
 Successfully installed pyfeather-0.0.1  
-```
-
-* **Python with poetry**  
-```bash
-cd feather && poetry run python -m pip install ./ -vvv
-# or
-poetry run python -m pip install https://github.com/innerNULL/feather/archive/refs/heads/main.zip -vvv
 ```
 
 ## How to Use

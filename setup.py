@@ -6,13 +6,20 @@ import os
 import re
 import subprocess
 import sys
+from typing import Dict, List, Tuple
 
-from setuptools import setup, Extension
+from setuptools import setup, Extension, find_packages
 from setuptools.command.build_ext import build_ext
 
 
+EXECUTABLE_PYTHON: str = sys.executable
+EXEC_PY_BIN_DIR: str = os.path.dirname(EXECUTABLE_PYTHON)
+
+CURR_DIR: str = os.path.abspath(os.path.dirname(__file__))
+CMAKE: str = os.path.join(EXEC_PY_BIN_DIR, "cmake")
+
 # Convert distutils Windows platform specifiers to CMake -A arguments
-PLAT_TO_CMAKE = {
+PLAT_TO_CMAKE: Dict[str, str] = {
     "win32": "Win32",
     "win-amd64": "x64",
     "win-arm32": "ARM",
@@ -20,12 +27,19 @@ PLAT_TO_CMAKE = {
 }
 
 
-PYTHON3_PATH = os.popen("which python3").read().strip("\n")
-EXECUTABLE_PYTHON = sys.executable
-PYTHON_ENV = PYTHON3_PATH
-if (PYTHON_ENV == "" or "python" not in PYTHON_ENV):
-    PYTHON_ENV = EXECUTABLE_PYTHON
-print("PYTHON_ENV: %s" % PYTHON_ENV)
+def get_install_deps() -> Tuple[List[str], List[str] ]:
+    dependency_links: List[str] = []
+    install_requires: List[str] = []
+    requirements: List[str] = open(
+        os.path.join(CURR_DIR, "requirements.txt"), "r")\
+                .read().strip("\n").strip(" ").split("\n")
+
+    for dep in requirements:
+        if "git@" in dep or "://" in dep:
+            dependency_links.append(dep)
+        else:
+            install_requires.append(dep)
+    return (install_requires, dependency_links)
 
 
 class CMakeExtension(Extension):
@@ -54,9 +68,8 @@ class CMakeBuild(build_ext):
         # from Python.
         cmake_args = [
             "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={}".format(extdir),
-            "-DPYTHON_EXECUTABLE={}".format(sys.executable),
+            "-DPYTHON_EXECUTABLE={}".format(EXECUTABLE_PYTHON),
             "-DCMAKE_BUILD_TYPE={}".format(cfg),  # not used on MSVC, but no harm
-            #"-DPYTHON_EXECUTABLE={}".format(PYTHON_ENV),
             "-DFEATHER_BUILD_EXAMPLES=OFF", 
             "-DFEATHER_BUILD_TESTS=OFF"
         ]
@@ -127,10 +140,10 @@ class CMakeBuild(build_ext):
 
         print("CMake Arguments: ", cmake_args)
         subprocess.check_call(
-            ["cmake", ext.sourcedir] + cmake_args, cwd=self.build_temp
+            [CMAKE, ext.sourcedir] + cmake_args, cwd=self.build_temp
         )
         subprocess.check_call(
-            ["cmake", "--build", "."] + build_args, cwd=self.build_temp
+            [CMAKE, "--build", "."] + build_args, cwd=self.build_temp
         )
 
 
@@ -141,10 +154,14 @@ setup(
     author_email="",
     description="A project makes feature-hash easier.",
     long_description="See 'https://github.com/innerNULL/feather'.",
-    #python_requires='>=3.7, <3.10',
-    ext_modules=[CMakeExtension("pyfeather")],
+    url="https://github.com/innerNULL/feather",
+    #python_requires='>=3.7, <3.11',
+    python_requires='>=3.8, <3.11',
+    install_requires=get_install_deps()[0],
+    dependency_links=get_install_deps()[1],
+    packages=find_packages(),
     cmdclass={"build_ext": CMakeBuild},
+    ext_modules=[CMakeExtension("pyfeather")],
     zip_safe=False,
-    url="https://github.com/innerNULL/feather", 
     extras_require={"test": ["pytest"]},
 )
