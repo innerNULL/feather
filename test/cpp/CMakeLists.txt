@@ -25,26 +25,22 @@ include_directories(${install_dir}/include)
 add_library(libgoogletest::gtest_main STATIC IMPORTED)
 set_property(
   TARGET libgoogletest::gtest_main 
-  PROPERTY IMPORTED_LOCATION 
-      ${install_dir}/lib/libgtest_main.a)
+  PROPERTY IMPORTED_LOCATION ${install_dir}/lib/libgtest_main.a)
 
 add_library(libgoogletest::gmock_main STATIC IMPORTED)
 set_property(
   TARGET libgoogletest::gmock_main 
-  PROPERTY IMPORTED_LOCATION  
-      ${install_dir}/lib/libgmock_main.a)
+  PROPERTY IMPORTED_LOCATION ${install_dir}/lib/libgmock_main.a)
 
 add_library(libgoogletest::gtest STATIC IMPORTED)
 set_property(
   TARGET libgoogletest::gtest 
-  PROPERTY IMPORTED_LOCATION 
-      ${install_dir}/lib/libgtest.a)
+  PROPERTY IMPORTED_LOCATION ${install_dir}/lib/libgtest.a)
 
 add_library(libgoogletest::gmock STATIC IMPORTED)
 set_property(
   TARGET libgoogletest::gmock 
-  PROPERTY IMPORTED_LOCATION  
-      ${install_dir}/lib/libgmock.a)
+  PROPERTY IMPORTED_LOCATION ${install_dir}/lib/libgmock.a)
 
 add_library(libgoogletest::libgoogletest INTERFACE IMPORTED)
 set_property(
